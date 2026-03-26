@@ -67,6 +67,10 @@ app.post("/api/users/sync", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Interview Mentor AI Backend running on http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(`🚀 Interview Mentor AI Backend running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

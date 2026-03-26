@@ -41,7 +41,7 @@ function App() {
   useEffect(() => {
     if (isLoaded && isSignedIn && user) {
       // Sync user profile to backend MongoDB Atlas
-      fetch("http://localhost:5000/api/users/sync", {
+      fetch(`${import.meta.env.VITE_API_URL || ""}/api/users/sync`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
