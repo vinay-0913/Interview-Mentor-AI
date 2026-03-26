@@ -1,8 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { MODE_CONFIG } from "../prompts";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+import { useUser, useClerk, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 
 export default function Landing({ onSelectMode }) {
+  const { isSignedIn } = useUser();
+  const clerk = useClerk();
+
+  const handleModeClick = (mode) => {
+    if (isSignedIn) {
+      onSelectMode(mode);
+    } else {
+      clerk.openSignIn();
+    }
+  };
+
   const words = ["Practice.", "Improve.", "Get Hired."];
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentText, setCurrentText] = useState("");
@@ -334,7 +345,7 @@ export default function Landing({ onSelectMode }) {
           >
             {/* Card 1: DSA */}
             <div
-              onClick={() => onSelectMode("DSA")}
+              onClick={() => handleModeClick("DSA")}
               style={{
                 position: "relative",
                 padding: "32px",
@@ -434,7 +445,7 @@ export default function Landing({ onSelectMode }) {
 
             {/* Card 2: HR */}
             <div
-              onClick={() => onSelectMode("HR")}
+              onClick={() => handleModeClick("HR")}
               style={{
                 position: "relative",
                 padding: "32px",
@@ -534,7 +545,7 @@ export default function Landing({ onSelectMode }) {
 
             {/* Card 3: Behavioral */}
             <div
-              onClick={() => onSelectMode("Behavioral")}
+              onClick={() => handleModeClick("Behavioral")}
               style={{
                 position: "relative",
                 padding: "32px",
