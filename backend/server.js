@@ -17,6 +17,10 @@ mongoose.connect(process.env.MONGO_URI)
 app.use(cors());
 app.use(express.json());
 
+// Root & Favicon fallback to prevent 404s when visiting directly
+app.get("/", (req, res) => res.send("Interview Mentor AI API is running safely! 🚀"));
+app.get("/favicon.ico", (req, res) => res.status(204).end());
+
 // Health check
 app.get("/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
