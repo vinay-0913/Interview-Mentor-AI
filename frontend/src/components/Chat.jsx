@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from "react";
+import "regenerator-runtime/runtime";
+import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
 import { MODE_CONFIG, SUGGESTIONS } from "../prompts";
 import { sendMessage } from "../api";
 import ChatMessage from "./ChatMessage";
@@ -17,6 +19,21 @@ export default function Chat({ mode, onEndSession, onBack }) {
   const [error, setError] = useState(null);
   const [initialized, setInitialized] = useState(false);
   const [proficiency, setProficiency] = useState(null);
+
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition
+  } = useSpeechRecognition();
+  const [baselineText, setBaselineText] = useState("");
+
+  useEffect(() => {
+    if (listening) {
+      const space = baselineText && transcript ? " " : "";
+      setInput(baselineText + space + transcript);
+    }
+  }, [transcript, listening, baselineText]);
 
   const handleProficiencySelect = async (level) => {
     setProficiency(level);
@@ -68,6 +85,13 @@ export default function Chat({ mode, onEndSession, onBack }) {
 
   const handleSend = async (text = input.trim()) => {
     if (!text || loading) return;
+
+    if (listening) {
+      SpeechRecognition.stopListening();
+    }
+    resetTranscript();
+    setBaselineText("");
+
     const userMsg = { role: "user", content: text, feedback: null };
     const userApiMsg = { role: "user", content: text };
     const newMessages = [...messages, userMsg];
@@ -415,19 +439,36 @@ export default function Chat({ mode, onEndSession, onBack }) {
                   boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                 }}
               >
-                <button
-                  style={{
-                    padding: "12px",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    color: "#777587",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <span className="material-symbols-outlined">mic</span>
-                </button>
+                {browserSupportsSpeechRecognition && (
+                  <button
+                    onClick={() => {
+                      if (listening) {
+                        SpeechRecognition.stopListening();
+                      } else {
+                        setBaselineText(input);
+                        resetTranscript();
+                        SpeechRecognition.startListening({ continuous: true });
+                      }
+                    }}
+                    disabled={loading}
+                    style={{
+                      padding: "12px",
+                      background: listening ? "rgba(186, 26, 26, 0.12)" : "none",
+                      border: "none",
+                      cursor: loading ? "not-allowed" : "pointer",
+                      color: listening ? "#ba1a1a" : "#777587",
+                      display: "flex",
+                      alignItems: "center",
+                      borderRadius: "50%",
+                      transition: "all 0.2s",
+                    }}
+                    title={listening ? "Stop microphone" : "Start microphone"}
+                  >
+                    <span className="material-symbols-outlined">
+                      {listening ? "mic_off" : "mic"}
+                    </span>
+                  </button>
+                )}
                 <input
                   ref={inputRef}
                   value={input}

@@ -265,7 +265,7 @@ export default function Landing({ onSelectMode }) {
               lineHeight: 1.6,
             }}
           >
-            Master the technical and behavioral skills needed to land your dream role.
+            Master the technical, HR, and behavioral skills needed to land your dream role.
           </p>
 
           {/* CTA Buttons */}
@@ -645,59 +645,7 @@ export default function Landing({ onSelectMode }) {
           </div>
         </section>
 
-        {/* ─── Stats / Social Proof ─── */}
-        <section
-          style={{
-            maxWidth: "80rem",
-            marginLeft: "auto",
-            marginRight: "auto",
-            paddingLeft: "24px",
-            paddingRight: "24px",
-            paddingBottom: "96px",
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            gap: "32px",
-          }}
-        >
-          {[
-            { value: "50k+", label: "Interviews Hosted" },
-            { value: "94%", label: "Success Rate" },
-            { value: "200+", label: "DSA Patterns" },
-            { value: "12+", label: "Global Languages" },
-          ].map((stat) => (
-            <div
-              key={stat.label}
-              style={{
-                textAlign: "center",
-                padding: "24px",
-                borderRadius: "16px",
-                backgroundColor: "#f3f4f5",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "1.875rem",
-                  fontWeight: 900,
-                  color: "#3525cd",
-                  marginBottom: "4px",
-                }}
-              >
-                {stat.value}
-              </div>
-              <div
-                style={{
-                  fontSize: "0.875rem",
-                  fontWeight: 600,
-                  color: "#464555",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </section>
+
       </main>
 
       {/* ─── Footer ─── */}
@@ -759,7 +707,7 @@ export default function Landing({ onSelectMode }) {
             </a>
           </div>
           <div style={{ fontSize: "0.875rem", color: "#464555" }}>
-            © 2024 Interview Mentor AI. All rights reserved.
+            © 2026 Interview Mentor AI. All rights reserved.
           </div>
         </div>
       </footer>
