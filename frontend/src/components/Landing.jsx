@@ -18,13 +18,14 @@ export default function Landing({ onSelectMode }) {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentText, setCurrentText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const currentWord = words[currentWordIndex];
     let typingSpeed = isDeleting ? 50 : 120;
 
     if (!isDeleting && currentText === currentWord) {
-      const pause = setTimeout(() => setIsDeleting(true), 2000); // Pause full word
+      const pause = setTimeout(() => setIsDeleting(true), 2000);
       return () => clearTimeout(pause);
     } else if (isDeleting && currentText === "") {
       setIsDeleting(false);
@@ -55,103 +56,246 @@ export default function Landing({ onSelectMode }) {
         WebkitFontSmoothing: "antialiased",
       }}
     >
+      {/* ─── Responsive Styles ─── */}
+      <style>{`
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+
+        /* Nav */
+        .landing-nav-links { display: flex; align-items: center; gap: 32px; }
+        .landing-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: #38393c; }
+        .landing-mobile-menu {
+          display: none;
+          flex-direction: column;
+          gap: 8px;
+          padding: 12px 24px 16px;
+          background: rgba(255,255,255,0.97);
+          border-bottom: 1px solid rgba(199,196,216,0.3);
+        }
+        .landing-mobile-menu.open { display: flex; }
+        .landing-mobile-menu a {
+          color: #64748b;
+          text-decoration: none;
+          font-weight: 500;
+          padding: 10px 12px;
+          border-radius: 8px;
+          font-size: 1rem;
+        }
+        .landing-mobile-menu a:hover { background: #f3f4f5; }
+
+        /* Cards grid */
+        .cards-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 32px;
+        }
+
+        /* Footer */
+        .footer-inner {
+          max-width: 80rem;
+          margin-left: auto;
+          margin-right: auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 32px;
+        }
+        .footer-links {
+          display: flex;
+          gap: 32px;
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: #464555;
+          flex-wrap: wrap;
+        }
+
+        /* ─── Tablet (≤ 1024px) ─── */
+        @media (max-width: 1024px) {
+          .cards-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+          }
+        }
+
+        /* ─── Mobile (≤ 640px) ─── */
+        @media (max-width: 640px) {
+          .landing-nav-links { display: none !important; }
+          .landing-hamburger { display: flex !important; }
+
+          .cards-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+          }
+
+          .footer-inner {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 20px;
+            text-align: left;
+          }
+          .footer-links {
+            gap: 16px;
+            flex-direction: column;
+          }
+
+          .hero-section {
+            padding-top: 48px !important;
+            padding-bottom: 48px !important;
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+          }
+
+          .selection-section {
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+            padding-bottom: 64px !important;
+          }
+
+          .header-logo-text {
+            font-size: 1rem !important;
+          }
+        }
+
+        /* ─── Medium (641px – 1024px) ─── */
+        @media (min-width: 641px) and (max-width: 1024px) {
+          .hero-section {
+            padding-top: 56px !important;
+            padding-bottom: 56px !important;
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+          }
+          .selection-section {
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+          }
+        }
+      `}</style>
+
       {/* ─── TopAppBar ─── */}
       <header
         style={{
           position: "sticky",
           top: 0,
           zIndex: 50,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "16px 24px",
-          width: "100%",
           backgroundColor: "rgba(255,255,255,0.7)",
           backdropFilter: "blur(16px)",
           WebkitBackdropFilter: "blur(16px)",
           boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <span
-            style={{
-              fontFamily: "'Manrope', sans-serif",
-              fontSize: "1.25rem",
-              fontWeight: 700,
-              letterSpacing: "-0.025em",
-              color: "#38393cff",
-            }}
-          >
-            Interview Mentor AI
-          </span>
-        </div>
-        <nav
+        <div
           style={{
             display: "flex",
+            justifyContent: "space-between",
             alignItems: "center",
-            gap: "32px",
+            padding: "16px 24px",
+            width: "100%",
           }}
         >
-          <a
-            href="#"
-            style={{
-              color: "#4f46e5",
-              fontWeight: 600,
-              padding: "4px 12px",
-              borderRadius: "8px",
-              textDecoration: "none",
-              transition: "background-color 0.2s",
-            }}
-          >
-            Home
-          </a>
-          <a
-            href="#"
-            style={{
-              color: "#64748b",
-              padding: "4px 12px",
-              borderRadius: "8px",
-              textDecoration: "none",
-              transition: "background-color 0.2s",
-            }}
-          >
-            Practice
-          </a>
-          <a
-            href="#"
-            style={{
-              color: "#64748b",
-              padding: "4px 12px",
-              borderRadius: "8px",
-              textDecoration: "none",
-              transition: "background-color 0.2s",
-            }}
-          >
-            Pricing
-          </a>
-        </nav>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <SignedOut>
-            <SignInButton mode="modal">
-              <button
-                style={{
-                  padding: "8px 20px",
-                  fontSize: "0.875rem",
-                  fontWeight: 700,
-                  color: "#475569",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  transition: "color 0.2s",
-                }}
-              >
-                Log In
-              </button>
-            </SignInButton>
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span
+              className="header-logo-text"
+              style={{
+                fontFamily: "'Manrope', sans-serif",
+                fontSize: "1.25rem",
+                fontWeight: 700,
+                letterSpacing: "-0.025em",
+                color: "#38393cff",
+              }}
+            >
+              Interview Mentor AI
+            </span>
+          </div>
+
+          {/* Desktop nav */}
+          <nav className="landing-nav-links">
+            <a
+              href="#"
+              style={{
+                color: "#4f46e5",
+                fontWeight: 600,
+                padding: "4px 12px",
+                borderRadius: "8px",
+                textDecoration: "none",
+                transition: "background-color 0.2s",
+              }}
+            >
+              Home
+            </a>
+            <a
+              href="#"
+              style={{
+                color: "#64748b",
+                padding: "4px 12px",
+                borderRadius: "8px",
+                textDecoration: "none",
+                transition: "background-color 0.2s",
+              }}
+            >
+              Practice
+            </a>
+            <a
+              href="#"
+              style={{
+                color: "#64748b",
+                padding: "4px 12px",
+                borderRadius: "8px",
+                textDecoration: "none",
+                transition: "background-color 0.2s",
+              }}
+            >
+              Pricing
+            </a>
+          </nav>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <SignedOut>
+              <SignInButton mode="modal">
+                <button
+                  style={{
+                    padding: "8px 20px",
+                    fontSize: "0.875rem",
+                    fontWeight: 700,
+                    color: "#475569",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    transition: "color 0.2s",
+                  }}
+                >
+                  Log In
+                </button>
+              </SignInButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+
+            {/* Hamburger – visible only on mobile via CSS */}
+            <button
+              className="landing-hamburger"
+              onClick={() => setMobileMenuOpen((o) => !o)}
+              aria-label="Toggle menu"
+            >
+              <span className="material-symbols-outlined">
+                {mobileMenuOpen ? "close" : "menu"}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile dropdown menu */}
+        <div className={`landing-mobile-menu${mobileMenuOpen ? " open" : ""}`}>
+          <a href="#" onClick={() => setMobileMenuOpen(false)}>Home</a>
+          <a href="#" onClick={() => setMobileMenuOpen(false)}>Practice</a>
+          <a href="#" onClick={() => setMobileMenuOpen(false)}>Pricing</a>
         </div>
       </header>
 
@@ -166,6 +310,7 @@ export default function Landing({ onSelectMode }) {
       >
         {/* ─── Hero Section ─── */}
         <section
+          className="hero-section"
           style={{
             minHeight: "100vh",
             display: "flex",
@@ -210,7 +355,7 @@ export default function Landing({ onSelectMode }) {
           <h1
             style={{
               fontFamily: "'Manrope', sans-serif",
-              fontSize: "clamp(3rem, 7vw, 4.5rem)",
+              fontSize: "clamp(2.25rem, 7vw, 4.5rem)",
               fontWeight: 800,
               letterSpacing: "-0.025em",
               color: "#38393cff",
@@ -226,36 +371,31 @@ export default function Landing({ onSelectMode }) {
           <div style={{ height: "48px", marginBottom: "24px" }}>
             <p
               style={{
-                fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
+                fontSize: "clamp(1.25rem, 3vw, 2.5rem)",
                 fontFamily: "'Manrope', sans-serif",
                 fontWeight: 800,
                 color: "#4f46e5",
                 margin: 0,
-                display: "inline-block"
+                display: "inline-block",
               }}
             >
               {currentText}
-              <span style={{ animation: "blink 1s step-end infinite", fontWeight: "normal", color: "#4f46e5" }}>|</span>
+              <span
+                style={{
+                  animation: "blink 1s step-end infinite",
+                  fontWeight: "normal",
+                  color: "#4f46e5",
+                }}
+              >
+                |
+              </span>
             </p>
           </div>
-
-          <style>
-            {`
-              @keyframes fadeInUp {
-                from { opacity: 0; transform: translateY(20px); }
-                to { opacity: 1; transform: translateY(0); }
-              }
-              @keyframes blink {
-                0%, 100% { opacity: 1; }
-                50% { opacity: 0; }
-              }
-            `}
-          </style>
 
           {/* Subtitle */}
           <p
             style={{
-              fontSize: "clamp(1.125rem, 2.5vw, 1.5rem)",
+              fontSize: "clamp(1rem, 2.5vw, 1.5rem)",
               color: "#464555",
               maxWidth: "42rem",
               marginLeft: "auto",
@@ -265,7 +405,8 @@ export default function Landing({ onSelectMode }) {
               lineHeight: 1.6,
             }}
           >
-            Master the technical, HR, and behavioral skills needed to land your dream role.
+            Master the technical, HR, and behavioral skills needed to land your
+            dream role.
           </p>
 
           {/* CTA Buttons */}
@@ -285,10 +426,10 @@ export default function Landing({ onSelectMode }) {
                   .scrollIntoView({ behavior: "smooth" })
               }
               style={{
-                padding: "16px 32px",
+                padding: "14px 28px",
                 borderRadius: "60px",
                 fontWeight: 700,
-                fontSize: "1.125rem",
+                fontSize: "clamp(1rem, 2vw, 1.125rem)",
                 background:
                   "linear-gradient(to bottom right, #3525cd, #4f46e5)",
                 color: "#ffffff",
@@ -312,6 +453,7 @@ export default function Landing({ onSelectMode }) {
         {/* ─── Selection Grid ─── */}
         <section
           id="practice-cards"
+          className="selection-section"
           style={{
             maxWidth: "80rem",
             marginLeft: "auto",
@@ -325,24 +467,25 @@ export default function Landing({ onSelectMode }) {
             <h2
               style={{
                 fontFamily: "'Manrope', sans-serif",
-                fontSize: "clamp(2rem, 4vw, 2.75rem)",
+                fontSize: "clamp(1.75rem, 4vw, 2.75rem)",
                 fontWeight: 800,
                 color: "#40454bff",
               }}
             >
               Interview Modes
             </h2>
-            <p style={{ color: "#464555", marginTop: "16px", fontSize: "1.125rem" }}>
+            <p
+              style={{
+                color: "#464555",
+                marginTop: "16px",
+                fontSize: "clamp(1rem, 2vw, 1.125rem)",
+              }}
+            >
               Select a mode to begin your practice session
             </p>
           </div>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "32px",
-            }}
-          >
+
+          <div className="cards-grid">
             {/* Card 1: DSA */}
             <div
               onClick={() => handleModeClick("DSA")}
@@ -361,14 +504,14 @@ export default function Landing({ onSelectMode }) {
                 e.currentTarget.style.transform = "scale(1.01)";
                 e.currentTarget.style.boxShadow =
                   "0 12px 24px -8px rgba(25,28,29,0.06)";
-                const arrow = e.currentTarget.querySelector('.arrow-icon');
+                const arrow = e.currentTarget.querySelector(".arrow-icon");
                 if (arrow) arrow.style.transform = "translateX(4px)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "scale(1)";
                 e.currentTarget.style.boxShadow =
                   "0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)";
-                const arrow = e.currentTarget.querySelector('.arrow-icon');
+                const arrow = e.currentTarget.querySelector(".arrow-icon");
                 if (arrow) arrow.style.transform = "translateX(0px)";
               }}
             >
@@ -399,7 +542,10 @@ export default function Landing({ onSelectMode }) {
                   justifyContent: "center",
                 }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: "1.875rem" }}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: "1.875rem" }}
+                >
                   code
                 </span>
               </div>
@@ -461,14 +607,14 @@ export default function Landing({ onSelectMode }) {
                 e.currentTarget.style.transform = "scale(1.01)";
                 e.currentTarget.style.boxShadow =
                   "0 12px 24px -8px rgba(25,28,29,0.06)";
-                const arrow = e.currentTarget.querySelector('.arrow-icon');
+                const arrow = e.currentTarget.querySelector(".arrow-icon");
                 if (arrow) arrow.style.transform = "translateX(4px)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "scale(1)";
                 e.currentTarget.style.boxShadow =
                   "0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)";
-                const arrow = e.currentTarget.querySelector('.arrow-icon');
+                const arrow = e.currentTarget.querySelector(".arrow-icon");
                 if (arrow) arrow.style.transform = "translateX(0px)";
               }}
             >
@@ -499,7 +645,10 @@ export default function Landing({ onSelectMode }) {
                   justifyContent: "center",
                 }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: "1.875rem" }}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: "1.875rem" }}
+                >
                   work
                 </span>
               </div>
@@ -561,14 +710,14 @@ export default function Landing({ onSelectMode }) {
                 e.currentTarget.style.transform = "scale(1.01)";
                 e.currentTarget.style.boxShadow =
                   "0 12px 24px -8px rgba(25,28,29,0.06)";
-                const arrow = e.currentTarget.querySelector('.arrow-icon');
+                const arrow = e.currentTarget.querySelector(".arrow-icon");
                 if (arrow) arrow.style.transform = "translateX(4px)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "scale(1)";
                 e.currentTarget.style.boxShadow =
                   "0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)";
-                const arrow = e.currentTarget.querySelector('.arrow-icon');
+                const arrow = e.currentTarget.querySelector(".arrow-icon");
                 if (arrow) arrow.style.transform = "translateX(0px)";
               }}
             >
@@ -599,7 +748,10 @@ export default function Landing({ onSelectMode }) {
                   justifyContent: "center",
                 }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: "1.875rem" }}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: "1.875rem" }}
+                >
                   psychology
                 </span>
               </div>
@@ -644,8 +796,6 @@ export default function Landing({ onSelectMode }) {
             </div>
           </div>
         </section>
-
-
       </main>
 
       {/* ─── Footer ─── */}
@@ -655,18 +805,7 @@ export default function Landing({ onSelectMode }) {
           padding: "48px 24px",
         }}
       >
-        <div
-          style={{
-            maxWidth: "80rem",
-            marginLeft: "auto",
-            marginRight: "auto",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: "32px",
-          }}
-        >
+        <div className="footer-inner">
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <span
               style={{
@@ -678,31 +817,14 @@ export default function Landing({ onSelectMode }) {
               Interview Mentor AI
             </span>
           </div>
-          <div
-            style={{
-              display: "flex",
-              gap: "32px",
-              fontSize: "0.875rem",
-              fontWeight: 500,
-              color: "#464555",
-            }}
-          >
-            <a
-              href="#"
-              style={{ color: "inherit", textDecoration: "none" }}
-            >
+          <div className="footer-links">
+            <a href="#" style={{ color: "inherit", textDecoration: "none" }}>
               Privacy Policy
             </a>
-            <a
-              href="#"
-              style={{ color: "inherit", textDecoration: "none" }}
-            >
+            <a href="#" style={{ color: "inherit", textDecoration: "none" }}>
               Terms of Service
             </a>
-            <a
-              href="#"
-              style={{ color: "inherit", textDecoration: "none" }}
-            >
+            <a href="#" style={{ color: "inherit", textDecoration: "none" }}>
               Contact Support
             </a>
           </div>

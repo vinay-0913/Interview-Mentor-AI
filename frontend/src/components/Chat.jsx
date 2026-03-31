@@ -24,7 +24,7 @@ export default function Chat({ mode, onEndSession, onBack }) {
     transcript,
     listening,
     resetTranscript,
-    browserSupportsSpeechRecognition
+    browserSupportsSpeechRecognition,
   } = useSpeechRecognition();
   const [baselineText, setBaselineText] = useState("");
 
@@ -62,7 +62,7 @@ export default function Chat({ mode, onEndSession, onBack }) {
 
   useEffect(() => {
     if (!initialized && config) {
-      if (mode === "DSA") return; // DSA initializes via handleProficiencySelect
+      if (mode === "DSA") return;
 
       const initialAiMsg = {
         role: "assistant",
@@ -136,8 +136,6 @@ export default function Chat({ mode, onEndSession, onBack }) {
   };
 
   const suggestions = SUGGESTIONS[mode] || [];
-
-  /* ─── mode label map ─── */
   const modeLabels = { DSA: "DSA Mode", HR: "HR Mode", Behavioral: "Behavioral Mode" };
 
   return (
@@ -151,6 +149,102 @@ export default function Chat({ mode, onEndSession, onBack }) {
         color: "#191c1d",
       }}
     >
+      {/* ─── Responsive Styles ─── */}
+      <style>{`
+        .chat-header-left { display: flex; align-items: center; gap: 16px; min-width: 0; }
+        .chat-header-logo {
+          font-family: 'Manrope', sans-serif;
+          font-size: 1.25rem;
+          font-weight: 700;
+          letter-spacing: -0.025em;
+          color: #38393cff;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .chat-header-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+        .chat-mode-label {
+          padding: 8px 16px;
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #64748b;
+          background: none;
+          border: none;
+          border-radius: 12px;
+          cursor: pointer;
+        }
+        .chat-end-btn {
+          padding: 8px 20px;
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #ffffff;
+          background-color: #ba1a1a;
+          border: none;
+          border-radius: 12px;
+          cursor: pointer;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+          transition: opacity 0.2s;
+          white-space: nowrap;
+        }
+
+        .proficiency-title {
+          font-size: 2rem;
+          font-weight: 800;
+          margin-bottom: 32px;
+          color: #414345ff;
+          font-family: 'Manrope', sans-serif;
+          text-align: center;
+          padding: 0 16px;
+        }
+
+        .proficiency-btn {
+          padding: 16px 32px;
+          font-size: 1.125rem;
+          font-weight: 600;
+          border-radius: 16px;
+          background-color: #ffffff;
+          border: 2px solid #e2e8f0;
+          color: #4f46e5;
+          cursor: pointer;
+          transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .chat-input-placeholder::placeholder { color: #9ca3af; }
+
+        /* ─── Mobile (≤ 640px) ─── */
+        @media (max-width: 640px) {
+          .chat-header-logo { font-size: 1rem; }
+          .chat-mode-label { display: none; }
+          .chat-end-btn {
+            padding: 8px 14px;
+            font-size: 0.8rem;
+          }
+
+          .proficiency-title { font-size: 1.5rem; margin-bottom: 24px; }
+          .proficiency-btn { padding: 12px 24px; font-size: 1rem; }
+
+          .chat-messages-area {
+            padding: 16px !important;
+            padding-bottom: 140px !important;
+          }
+
+          .chat-input-area {
+            padding: 12px 16px !important;
+          }
+        }
+
+        /* ─── Tablet (641px – 1024px) ─── */
+        @media (min-width: 641px) and (max-width: 1024px) {
+          .chat-messages-area {
+            padding: 20px !important;
+            padding-bottom: 150px !important;
+          }
+          .chat-input-area {
+            padding: 16px 20px !important;
+          }
+        }
+      `}</style>
+
       {/* ─── Header ─── */}
       <header
         style={{
@@ -166,9 +260,10 @@ export default function Chat({ mode, onEndSession, onBack }) {
           WebkitBackdropFilter: "blur(16px)",
           boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
           flexShrink: 0,
+          gap: "12px",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        <div className="chat-header-left">
           <button
             onClick={onBack}
             style={{
@@ -180,53 +275,22 @@ export default function Chat({ mode, onEndSession, onBack }) {
               display: "flex",
               alignItems: "center",
               color: "#64748b",
+              flexShrink: 0,
             }}
             title="Back to home"
           >
             <span className="material-symbols-outlined">arrow_back</span>
           </button>
-          <span
-            style={{
-              fontFamily: "'Manrope', sans-serif",
-              fontSize: "1.25rem",
-              fontWeight: 700,
-              letterSpacing: "-0.025em",
-              color: "#38393cff",
-            }}
-          >
-            Interview Mentor AI
-          </span>
+          <span className="chat-header-logo">Interview Mentor AI</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <button
-            style={{
-              padding: "8px 16px",
-              fontSize: "0.875rem",
-              fontWeight: 600,
-              color: "#64748b",
-              background: "none",
-              border: "none",
-              borderRadius: "12px",
-              cursor: "pointer",
-              transition: "background-color 0.2s",
-            }}
-          >
+
+        <div className="chat-header-right">
+          <button className="chat-mode-label">
             {modeLabels[mode] || mode}
           </button>
           <button
+            className="chat-end-btn"
             onClick={() => onEndSession(feedbacks)}
-            style={{
-              padding: "8px 20px",
-              fontSize: "0.875rem",
-              fontWeight: 600,
-              color: "#ffffff",
-              backgroundColor: "#ba1a1a",
-              border: "none",
-              borderRadius: "12px",
-              cursor: "pointer",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-              transition: "opacity 0.2s",
-            }}
           >
             End Session
           </button>
@@ -243,42 +307,55 @@ export default function Chat({ mode, onEndSession, onBack }) {
           overflow: "hidden",
         }}
       >
-        <main style={{ flex: 1, display: "flex", flexDirection: "column", position: "relative", backgroundColor: "#f8f9fa" }}>
+        <main
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            position: "relative",
+            backgroundColor: "#f8f9fa",
+          }}
+        >
           {/* Proficiency Selection */}
           {mode === "DSA" && !proficiency && (
             <div
               style={{
                 position: "absolute",
-                top: 0, left: 0, right: 0, bottom: 0,
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
                 backgroundColor: "#f8f9fa",
                 zIndex: 10,
+                padding: "24px",
               }}
             >
-              <h2 style={{ fontSize: "2rem", fontWeight: 800, marginBottom: "32px", color: "#414345ff", fontFamily: "'Manrope', sans-serif" }}>
+              <h2 className="proficiency-title">
                 Select Your Proficiency Level
               </h2>
-              <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", justifyContent: "center" }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "16px",
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                }}
+              >
                 {["Beginner", "Intermediate", "Advanced"].map((level) => (
                   <button
                     key={level}
+                    className="proficiency-btn"
                     onClick={() => handleProficiencySelect(level)}
-                    style={{
-                      padding: "16px 32px",
-                      fontSize: "1.125rem",
-                      fontWeight: 600,
-                      borderRadius: "16px",
-                      backgroundColor: "#ffffff",
-                      border: "2px solid #e2e8f0",
-                      color: "#4f46e5",
-                      cursor: "pointer",
-                      transition: "border-color 0.2s, background-color 0.2s",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#4f46e5")}
-                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#e2e8f0")}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.borderColor = "#4f46e5")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.borderColor = "#e2e8f0")
+                    }
                   >
                     {level}
                   </button>
@@ -289,6 +366,7 @@ export default function Chat({ mode, onEndSession, onBack }) {
 
           {/* Messages scroll area */}
           <div
+            className="chat-messages-area"
             style={{
               flex: 1,
               overflowY: "auto",
@@ -308,7 +386,7 @@ export default function Chat({ mode, onEndSession, onBack }) {
                 <h1
                   style={{
                     fontFamily: "'Manrope', sans-serif",
-                    fontSize: "2.25rem",
+                    fontSize: "clamp(1.5rem, 4vw, 2.25rem)",
                     fontWeight: 800,
                     letterSpacing: "-0.025em",
                     color: "#191c1d",
@@ -320,7 +398,7 @@ export default function Chat({ mode, onEndSession, onBack }) {
                 <p
                   style={{
                     color: "#464555",
-                    fontSize: "1.125rem",
+                    fontSize: "clamp(1rem, 2vw, 1.125rem)",
                     maxWidth: "36rem",
                     margin: "0 auto 24px",
                   }}
@@ -385,12 +463,20 @@ export default function Chat({ mode, onEndSession, onBack }) {
                     borderRadius: "12px",
                     backgroundColor: "rgba(186,26,26,0.08)",
                     border: "1px solid rgba(186,26,26,0.15)",
+                    flexWrap: "wrap",
                   }}
                 >
-                  <span className="material-symbols-outlined" style={{ color: "#ba1a1a" }}>
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ color: "#ba1a1a" }}
+                  >
                     error
                   </span>
-                  <p style={{ flex: 1, fontSize: "0.875rem", color: "#ba1a1a" }}>{error}</p>
+                  <p
+                    style={{ flex: 1, fontSize: "0.875rem", color: "#ba1a1a", minWidth: "120px" }}
+                  >
+                    {error}
+                  </p>
                   <button
                     onClick={handleRetry}
                     style={{
@@ -415,6 +501,7 @@ export default function Chat({ mode, onEndSession, onBack }) {
 
           {/* ─── Bottom Input Area ─── */}
           <div
+            className="chat-input-area"
             style={{
               position: "absolute",
               bottom: 0,
@@ -453,7 +540,9 @@ export default function Chat({ mode, onEndSession, onBack }) {
                     disabled={loading}
                     style={{
                       padding: "12px",
-                      background: listening ? "rgba(186, 26, 26, 0.12)" : "none",
+                      background: listening
+                        ? "rgba(186, 26, 26, 0.12)"
+                        : "none",
                       border: "none",
                       cursor: loading ? "not-allowed" : "pointer",
                       color: listening ? "#ba1a1a" : "#777587",
@@ -461,6 +550,7 @@ export default function Chat({ mode, onEndSession, onBack }) {
                       alignItems: "center",
                       borderRadius: "50%",
                       transition: "all 0.2s",
+                      flexShrink: 0,
                     }}
                     title={listening ? "Stop microphone" : "Start microphone"}
                   >
@@ -476,6 +566,7 @@ export default function Chat({ mode, onEndSession, onBack }) {
                   onKeyDown={handleKeyDown}
                   placeholder="Type your technical explanation here..."
                   disabled={loading}
+                  className="chat-input-placeholder"
                   style={{
                     flex: 1,
                     border: "none",
@@ -485,6 +576,7 @@ export default function Chat({ mode, onEndSession, onBack }) {
                     fontSize: "1rem",
                     padding: "16px 8px",
                     fontFamily: "'Inter', sans-serif",
+                    minWidth: 0,
                   }}
                 />
                 <button
@@ -499,7 +591,8 @@ export default function Chat({ mode, onEndSession, onBack }) {
                         : "linear-gradient(to bottom right, #3525cd, #4f46e5)",
                     color: "#ffffff",
                     border: "none",
-                    cursor: loading || !input.trim() ? "not-allowed" : "pointer",
+                    cursor:
+                      loading || !input.trim() ? "not-allowed" : "pointer",
                     boxShadow:
                       loading || !input.trim()
                         ? "none"
@@ -507,6 +600,7 @@ export default function Chat({ mode, onEndSession, onBack }) {
                     transition: "all 0.2s",
                     display: "flex",
                     alignItems: "center",
+                    flexShrink: 0,
                   }}
                 >
                   <span
