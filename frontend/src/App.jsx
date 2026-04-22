@@ -18,10 +18,10 @@ function App() {
 
       if (decodedPath === 'summary') {
         setView('summary');
-      } else if (['DSA', 'HR', 'Behavioral'].includes(decodedPath)) {
+      } else if (['DSA', 'HR', 'Behavioral', 'Technical'].includes(decodedPath)) {
         setMode(decodedPath);
         setView('chat');
-      } else if (['DSA Mode', 'HR Mode', 'Behavioral Mode'].includes(decodedPath)) {
+      } else if (['DSA Mode', 'HR Mode', 'Behavioral Mode', 'Technical Mode'].includes(decodedPath)) {
         setMode(decodedPath.replace(' Mode', ''));
         setView('chat');
       } else {

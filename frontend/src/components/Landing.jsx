@@ -92,7 +92,7 @@ export default function Landing({ onSelectMode }) {
         /* Cards grid */
         .cards-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(4, 1fr);
           gap: 32px;
         }
 
@@ -782,6 +782,108 @@ export default function Landing({ onSelectMode }) {
                   display: "flex",
                   alignItems: "center",
                   color: "#7e3000",
+                  fontWeight: 700,
+                }}
+              >
+                Practice Now
+                <span
+                  className="arrow-icon material-symbols-outlined"
+                  style={{ marginLeft: "4px", transition: "transform 0.3s ease" }}
+                >
+                  arrow_forward
+                </span>
+              </div>
+            </div>
+
+            {/* Card 4: Technical */}
+            <div
+              onClick={() => handleModeClick("Technical")}
+              style={{
+                position: "relative",
+                padding: "32px",
+                borderRadius: "16px",
+                backgroundColor: "#ffffff",
+                boxShadow:
+                  "0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)",
+                cursor: "pointer",
+                overflow: "hidden",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "scale(1.01)";
+                e.currentTarget.style.boxShadow =
+                  "0 12px 24px -8px rgba(25,28,29,0.06)";
+                const arrow = e.currentTarget.querySelector(".arrow-icon");
+                if (arrow) arrow.style.transform = "translateX(4px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.boxShadow =
+                  "0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)";
+                const arrow = e.currentTarget.querySelector(".arrow-icon");
+                if (arrow) arrow.style.transform = "translateX(0px)";
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  width: "128px",
+                  height: "128px",
+                  backgroundColor: "rgba(207,240,249,0.3)",
+                  borderRadius: "50%",
+                  marginRight: "-64px",
+                  marginTop: "-64px",
+                  filter: "blur(48px)",
+                }}
+              ></div>
+              <div
+                style={{
+                  marginBottom: "24px",
+                  width: "56px",
+                  height: "56px",
+                  borderRadius: "16px",
+                  backgroundColor: "#cff0f9",
+                  color: "#0e7490",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: "1.875rem" }}
+                >
+                  dns
+                </span>
+              </div>
+              <h3
+                style={{
+                  fontFamily: "'Manrope', sans-serif",
+                  fontSize: "1.5rem",
+                  fontWeight: 700,
+                  color: "#475569",
+                  marginBottom: "12px",
+                }}
+              >
+                ⚙️ Technical
+              </h3>
+              <p
+                style={{
+                  color: "#464555",
+                  fontWeight: 500,
+                  lineHeight: 1.6,
+                  marginBottom: "24px",
+                }}
+              >
+                CS fundamentals — OOPs, DBMS, Networks & OS with structured Q&A.
+              </p>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  color: "#0e7490",
                   fontWeight: 700,
                 }}
               >

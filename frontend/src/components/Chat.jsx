@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import "regenerator-runtime/runtime";
 import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
 import { MODE_CONFIG, SUGGESTIONS } from "../prompts";
-import { sendMessage } from "../api";
+import { sendMessage, fetchAudioBlob } from "../api";
 import ChatMessage from "./ChatMessage";
 import TypingIndicator from "./TypingIndicator";
 
@@ -10,6 +10,35 @@ export default function Chat({ mode, onEndSession, onBack }) {
   const config = MODE_CONFIG[mode];
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const audioRef = useRef(null);
+
+  const playAudioMessage = async (text) => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+    try {
+      const blobUrl = await fetchAudioBlob(text);
+      if (blobUrl) {
+        const audio = new Audio(blobUrl);
+        audioRef.current = audio;
+        audio.play().catch(e => console.error("Audio play error:", e));
+        audio.onended = () => URL.revokeObjectURL(blobUrl);
+      }
+    } catch (e) {
+      console.error("TTS fetch error:", e);
+    }
+  };
+
+  const stopAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    return () => stopAudio();
+  }, []);
 
   const [messages, setMessages] = useState([]);
   const [apiMessages, setApiMessages] = useState([]);
@@ -53,6 +82,7 @@ export default function Chat({ mode, onEndSession, onBack }) {
       setMessages([aiMsg]);
       setApiMessages([{ role: "user", content: initMessage }, aiApiMsg]);
       setInitialized(true);
+      playAudioMessage(data.reply);
     } catch (err) {
       setError("Failed to start session.");
     } finally {
@@ -60,19 +90,23 @@ export default function Chat({ mode, onEndSession, onBack }) {
     }
   };
 
-  useEffect(() => {
-    if (!initialized && config) {
-      if (mode === "DSA") return;
+  const initRef = useRef(false);
 
-      const initialAiMsg = {
-        role: "assistant",
-        content: config.initialMessage,
-        feedback: null,
-      };
-      setMessages([initialAiMsg]);
-      setApiMessages([{ role: "assistant", content: config.initialMessage }]);
-      setInitialized(true);
-    }
+  useEffect(() => {
+    if (initRef.current || initialized || !config) return;
+    if (mode === "DSA") return;
+
+    initRef.current = true;
+
+    const initialAiMsg = {
+      role: "assistant",
+      content: config.initialMessage,
+      feedback: null,
+    };
+    setMessages([initialAiMsg]);
+    setApiMessages([{ role: "assistant", content: config.initialMessage }]);
+    setInitialized(true);
+    playAudioMessage(config.initialMessage);
   }, [initialized, config, mode]);
 
   useEffect(() => {
@@ -114,6 +148,7 @@ export default function Chat({ mode, onEndSession, onBack }) {
       if (data.feedback) {
         setFeedbacks((prev) => [...prev, data.feedback]);
       }
+      playAudioMessage(data.reply);
     } catch (err) {
       console.error("Send error:", err);
       setError(err.message || "Something went wrong. Please try again.");
@@ -136,7 +171,7 @@ export default function Chat({ mode, onEndSession, onBack }) {
   };
 
   const suggestions = SUGGESTIONS[mode] || [];
-  const modeLabels = { DSA: "DSA Mode", HR: "HR Mode", Behavioral: "Behavioral Mode" };
+  const modeLabels = { DSA: "DSA Mode", HR: "HR Mode", Behavioral: "Behavioral Mode", Technical: "Technical Mode" };
 
   return (
     <div
@@ -265,7 +300,7 @@ export default function Chat({ mode, onEndSession, onBack }) {
       >
         <div className="chat-header-left">
           <button
-            onClick={onBack}
+            onClick={() => { stopAudio(); onBack(); }}
             style={{
               background: "none",
               border: "none",
@@ -290,7 +325,7 @@ export default function Chat({ mode, onEndSession, onBack }) {
           </button>
           <button
             className="chat-end-btn"
-            onClick={() => onEndSession(feedbacks)}
+            onClick={() => { stopAudio(); onEndSession(feedbacks); }}
           >
             End Session
           </button>

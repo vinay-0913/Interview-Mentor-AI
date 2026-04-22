@@ -14,3 +14,15 @@ export async function sendMessage(messages, mode) {
 
   return response.json();
 }
+
+export async function fetchAudioBlob(text) {
+  if (!text) return null;
+  const response = await fetch(`${API_BASE}/tts`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text }),
+  });
+  if (!response.ok) return null;
+  const blob = await response.blob();
+  return URL.createObjectURL(blob);
+}

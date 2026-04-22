@@ -35,6 +35,18 @@ export const MODE_CONFIG = {
     bgAccent: "bg-amber-500/10",
     initialMessage: "Hi there! I'm your behavioral interview mentor. I'll help you craft compelling stories that showcase your skills and impact. 🎯\n\nLet's start:\n\n**Tell me about a time when you faced a significant challenge at work or in a project. How did you handle it, and what was the outcome?**\n\nRemember to use the **STAR method**: Situation, Task, Action, Result.",
   },
+  Technical: {
+    title: "Technical Interview",
+    subtitle: "CS Fundamentals",
+    description: "Ace CS technical rounds with questions on OOPs, DBMS, Computer Networks, and Operating Systems.",
+    icon: "⚙️",
+    color: "from-cyan-500 to-blue-600",
+    colorLight: "from-cyan-500/20 to-blue-600/20",
+    borderColor: "border-cyan-500/30",
+    textColor: "text-cyan-400",
+    bgAccent: "bg-cyan-500/10",
+    initialMessage: "Hello! I'm your CS Technical interviewer today. We'll cover four core subjects: **OOPs**, **DBMS**, **Computer Networks**, and **Operating Systems** — 3 questions from each. 📚\n\nLet's begin with Object-Oriented Programming:\n\n**What are the four main pillars of OOPs? Briefly explain each one with an example.**",
+  },
 };
 
 export const SUGGESTIONS = {
@@ -52,5 +64,10 @@ export const SUGGESTIONS = {
     "A time I showed leadership",
     "How I handled a conflict",
     "A project I'm most proud of",
+  ],
+  Technical: [
+    "Explain polymorphism with an example",
+    "What is normalization in DBMS?",
+    "Difference between TCP and UDP",
   ],
 };

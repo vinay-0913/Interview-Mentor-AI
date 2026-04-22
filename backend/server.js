@@ -4,6 +4,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const { chat } = require("./gemini");
 const User = require("./models/User");
+const { MsEdgeTTS, OUTPUT_FORMAT } = require("msedge-tts");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,7 +36,7 @@ app.post("/api/chat", async (req, res) => {
       return res.status(400).json({ error: "Messages array is required and must not be empty." });
     }
 
-    if (!mode || !["DSA", "HR", "Behavioral"].includes(mode)) {
+    if (!mode || !["DSA", "HR", "Behavioral", "Technical"].includes(mode)) {
       return res.status(400).json({ error: "Mode must be one of: DSA, HR, Behavioral" });
     }
 
@@ -47,6 +48,32 @@ app.post("/api/chat", async (req, res) => {
       error: "Failed to get AI response. Please try again.",
       details: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
+  }
+});
+
+app.post("/api/tts", async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text) {
+      return res.status(400).json({ error: "Text is required" });
+    }
+    const tts = new MsEdgeTTS();
+    await tts.setMetadata("en-US-AvaNeural", OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
+    const result = tts.toStream(text);
+
+    res.setHeader("Content-Type", "audio/mpeg");
+    result.audioStream.on("error", (err) => {
+      console.error("TTS stream error:", err.message);
+      if (!res.headersSent) {
+        res.status(500).json({ error: "TTS stream failed" });
+      }
+    });
+    result.audioStream.pipe(res);
+  } catch (error) {
+    console.error("TTS API error:", error.message);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Failed to generate TTS" });
+    }
   }
 });
 
