@@ -39,35 +39,42 @@ export default function SessionSummary({ feedbacks, mode, onNewSession }) {
 
   const getPerformanceLevel = (s) => {
     const num = parseFloat(s);
-    if (num >= 8) return { label: "Excellent Performance", emoji: "🌟" };
-    if (num >= 6) return { label: "Good Performance", emoji: "👍" };
-    if (num >= 4) return { label: "Average Performance", emoji: "📈" };
-    return { label: "Needs Improvement", emoji: "💪" };
+    if (num >= 8) return { label: "Excellent", color: "text-link bg-link/10 border-link/20" };
+    if (num >= 6) return { label: "Good", color: "text-link bg-link/10 border-link/20" };
+    if (num >= 4) return { label: "Average", color: "text-warning-deep bg-warning-soft border-warning/30" };
+    return { label: "Needs work", color: "text-error bg-error-soft/60 border-error/20" };
   };
 
   const performance = getPerformanceLevel(avgScore);
 
   const tips = {
     DSA: [
-      "Practice pattern recognition — most problems follow known templates",
-      "Always discuss time and space complexity",
-      "Start with brute force, then optimize step by step",
-      "Draw diagrams for tree/graph problems",
-      "Think out loud — interviewers value your thought process",
+      "Practice pattern recognition — most problems follow known templates.",
+      "Always discuss time and space complexity.",
+      "Start with brute force, then optimize step by step.",
+      "Draw diagrams for tree/graph problems.",
+      "Think out loud — interviewers value your thought process.",
     ],
     HR: [
-      "Use the STAR method consistently for all answers",
-      "Quantify your impact with numbers when possible",
-      "Research the company culture before the interview",
-      "Prepare 3-4 stories that cover multiple competencies",
-      "Show enthusiasm and self-awareness",
+      "Use the STAR method consistently for all answers.",
+      "Quantify your impact with numbers when possible.",
+      "Research the company culture before the interview.",
+      "Prepare 3-4 stories that cover multiple competencies.",
+      "Show enthusiasm and self-awareness.",
     ],
     Behavioral: [
-      "Every story should have a clear beginning, middle, and end",
-      "Focus on YOUR contribution, not the team's",
-      "Include lessons learned and growth",
-      "Vary your stories — don't reuse the same one",
-      "Practice concise storytelling — 2 minutes per answer",
+      "Every story should have a clear beginning, middle, and end.",
+      "Focus on YOUR contribution, not the team's.",
+      "Include lessons learned and growth.",
+      "Vary your stories — don't reuse the same one.",
+      "Practice concise storytelling — 2 minutes per answer.",
+    ],
+    Technical: [
+      "Understand the 'why' behind concepts, not just definitions.",
+      "Relate theory to practical applications when explaining.",
+      "Use clear examples and analogies.",
+      "Structure your answers with a logical flow.",
+      "Be honest about what you don't know — then reason through it.",
     ],
   };
 
@@ -81,211 +88,62 @@ export default function SessionSummary({ feedbacks, mode, onNewSession }) {
     : circumference;
 
   return (
-    <div
-      style={{
-        backgroundColor: "#f8f9fa",
-        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
-        color: "#191c1d",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      {/* ─── Responsive Styles ─── */}
-      <style>{`
-        /* Hero score section */
-        .summary-hero-inner {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          gap: 48px;
-          background-color: #ffffff;
-          padding: 48px;
-          border-radius: 24px;
-          box-shadow: 0 20px 40px -12px rgba(25,28,29,0.06);
-          border: 1px solid rgba(199,196,216,0.2);
-          flex-wrap: wrap;
-        }
+    <div className="w-full min-h-screen flex flex-col bg-canvas-soft text-ink" style={{ fontFamily: "var(--font-sans)" }}>
 
-        .summary-score-ring {
-          position: relative;
-          width: 192px;
-          height: 192px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-        }
-
-        .summary-hero-text { flex: 1; min-width: 240px; }
-
-        /* Insights grid */
-        .summary-insights-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 32px;
-        }
-
-        /* Action button */
-        .summary-new-session-btn {
-          padding: 16px 40px;
-          background: linear-gradient(to bottom right, #3525cd, #4f46e5);
-          color: #ffffff;
-          border-radius: 16px;
-          font-weight: 700;
-          font-size: 1.125rem;
-          border: none;
-          cursor: pointer;
-          box-shadow: 0 10px 25px -5px rgba(53,37,205,0.25), 0 8px 10px -6px rgba(53,37,205,0.1);
-          transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        /* ─── Tablet (≤ 1024px) ─── */
-        @media (max-width: 1024px) {
-          .summary-insights-grid {
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 24px;
-          }
-        }
-
-        /* ─── Mobile (≤ 640px) ─── */
-        @media (max-width: 640px) {
-          .summary-hero-inner {
-            flex-direction: column;
-            align-items: center;
-            padding: 28px 20px;
-            gap: 28px;
-            text-align: center;
-          }
-
-          .summary-score-ring {
-            width: 160px;
-            height: 160px;
-          }
-
-          .summary-hero-text {
-            min-width: unset;
-            width: 100%;
-          }
-
-          .summary-insights-grid {
-            grid-template-columns: 1fr;
-            gap: 16px;
-          }
-
-          .summary-main {
-            padding: 28px 16px !important;
-          }
-
-          .summary-new-session-btn {
-            padding: 14px 28px;
-            font-size: 1rem;
-            width: 100%;
-          }
-        }
-
-        /* ─── Small-Medium (641px – 900px) ─── */
-        @media (min-width: 641px) and (max-width: 900px) {
-          .summary-hero-inner {
-            flex-direction: column;
-            align-items: center;
-            padding: 36px 28px;
-            gap: 32px;
-            text-align: center;
-          }
-          .summary-hero-text { min-width: unset; width: 100%; }
-          .summary-main { padding: 36px 20px !important; }
-          .summary-insights-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
-
-      <main
-        className="summary-main"
-        style={{
-          flexGrow: 1,
-          maxWidth: "80rem",
-          margin: "0 auto",
-          width: "100%",
-          padding: "48px 24px",
-          boxSizing: "border-box",
-        }}
-      >
-        <h1
-          style={{
-            fontFamily: "'Manrope', sans-serif",
-            fontSize: "clamp(1.875rem, 5vw, 3rem)",
-            fontWeight: 800,
-            color: "#3525cd",
-            marginBottom: "32px",
-            letterSpacing: "-0.025em",
-            textAlign: "center",
-          }}
-        >
-          Session Summary
-        </h1>
+      <main className="flex-grow w-full max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        {/* Page title */}
+        <div className="text-center mb-12">
+          <span
+            className="inline-block text-xs font-normal tracking-wide uppercase text-mute mb-4"
+            style={{ fontFamily: "var(--font-mono)" }}
+          >
+            Session Complete
+          </span>
+          <h1
+            className="text-ink font-semibold"
+            style={{
+              fontSize: "clamp(24px, 5vw, 32px)",
+              letterSpacing: "-1.28px",
+              lineHeight: "1.25",
+            }}
+          >
+            Your {config?.title || mode} results.
+          </h1>
+        </div>
 
         {/* ─── Hero Score Section ─── */}
-        <section style={{ marginBottom: "64px", position: "relative" }}>
-          <div className="summary-hero-inner">
+        <section className="mb-16 relative">
+          <div className="flex flex-col sm:flex-row items-center gap-10 bg-canvas rounded-[12px] p-8 sm:p-12 shadow-level-4 border border-hairline">
             {/* Circular Progress Ring */}
-            <div className="summary-score-ring">
-              <svg
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  transform: "rotate(-90deg)",
-                }}
-              >
+            <div className="relative w-48 h-48 flex items-center justify-center shrink-0">
+              <svg className="w-full h-full" style={{ transform: "rotate(-90deg)" }}>
                 <circle
-                  cx="96"
-                  cy="96"
-                  fill="transparent"
-                  r="88"
-                  stroke="#e1e3e4"
-                  strokeWidth="12"
-                ></circle>
+                  cx="96" cy="96" r="88" fill="transparent"
+                  stroke="var(--color-hairline)" strokeWidth="10"
+                />
                 <circle
-                  cx="96"
-                  cy="96"
-                  fill="transparent"
-                  r="88"
-                  stroke="#3525cd"
+                  cx="96" cy="96" r="88" fill="transparent"
+                  stroke="var(--color-ink)" strokeWidth="10"
                   strokeDasharray={circumference}
                   strokeDashoffset={dashoffset}
                   strokeLinecap="round"
-                  strokeWidth="12"
                   style={{ transition: "stroke-dashoffset 1s ease-out" }}
-                ></circle>
+                />
               </svg>
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span
-                  style={{
-                    fontFamily: "'Manrope', sans-serif",
-                    fontSize: "3rem",
-                    fontWeight: 800,
-                    color: "#191c1d",
-                  }}
+                  className="text-ink font-semibold"
+                  style={{ fontSize: "48px", letterSpacing: "-2.4px", lineHeight: "1" }}
                 >
                   {avgScore}
                 </span>
                 <span
+                  className="text-mute mt-1"
                   style={{
-                    color: "#464555",
-                    fontSize: "0.875rem",
+                    fontSize: "11px",
+                    fontFamily: "var(--font-mono)",
                     textTransform: "uppercase",
                     letterSpacing: "0.05em",
-                    fontWeight: 600,
                   }}
                 >
                   Overall Score
@@ -293,167 +151,64 @@ export default function SessionSummary({ feedbacks, mode, onNewSession }) {
               </div>
             </div>
 
-            <div className="summary-hero-text">
+            {/* Text content */}
+            <div className="flex-1 min-w-0 text-center sm:text-left">
               <h2
+                className="text-ink font-semibold mb-3"
                 style={{
-                  fontFamily: "'Manrope', sans-serif",
-                  fontSize: "clamp(1.75rem, 4vw, 2.25rem)",
-                  fontWeight: 700,
-                  color: "#191c1d",
-                  marginBottom: "16px",
+                  fontSize: "clamp(20px, 4vw, 24px)",
+                  letterSpacing: "-0.96px",
+                  lineHeight: "32px",
                 }}
               >
-                Great work!
+                Great work on your session.
               </h2>
-              <p
-                style={{
-                  fontSize: "clamp(1rem, 2vw, 1.125rem)",
-                  color: "#464555",
-                  maxWidth: "42rem",
-                  lineHeight: 1.6,
-                  marginBottom: "24px",
-                }}
-              >
-                You've completed your {config.title} practice. Review the
+              <p className="text-body text-base leading-6 max-w-lg mb-5">
+                You've completed your {config?.title || mode} practice. Review the
                 insights below to continue improving your interview performance.
               </p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", justifyContent: "inherit" }}>
-                <span
-                  style={{
-                    padding: "6px 16px",
-                    backgroundColor: "#ffdbcc",
-                    color: "#7b2f00",
-                    borderRadius: "9999px",
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                  }}
-                >
-                  {parseFloat(avgScore) >= 7
-                    ? "High Confidence"
-                    : "Gaining Confidence"}
-                </span>
-                <span
-                  style={{
-                    padding: "6px 16px",
-                    backgroundColor: "#e2dfff",
-                    color: "#413f82",
-                    borderRadius: "9999px",
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                  }}
-                >
+              <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+                <span className={`inline-flex items-center h-6 px-2.5 text-xs font-medium rounded-full border ${performance.color}`}>
                   {performance.label}
+                </span>
+                <span className="inline-flex items-center h-6 px-2.5 text-xs font-medium text-body bg-canvas-soft-2 rounded-full border border-hairline">
+                  {feedbacks.length} {feedbacks.length === 1 ? "question" : "questions"} answered
                 </span>
               </div>
             </div>
           </div>
-
-          {/* Decorative Element */}
-          <div
-            style={{
-              position: "absolute",
-              top: "-24px",
-              right: "-24px",
-              width: "128px",
-              height: "128px",
-              backgroundColor: "rgba(53,37,205,0.05)",
-              borderRadius: "50%",
-              filter: "blur(48px)",
-              pointerEvents: "none",
-            }}
-          ></div>
         </section>
 
         {/* ─── Main Insights Grid ─── */}
-        <div className="summary-insights-grid">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           {/* Your Strengths Card */}
-          <div
-            style={{
-              backgroundColor: "#ffffff",
-              padding: "32px",
-              borderRadius: "24px",
-              boxShadow: "0 20px 40px -12px rgba(25, 28, 29, 0.06)",
-              display: "flex",
-              flexDirection: "column",
-              transition: "transform 0.3s",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "scale(1.02)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "scale(1)")
-            }
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-                marginBottom: "32px",
-              }}
-            >
-              <div
-                style={{
-                  padding: "12px",
-                  backgroundColor: "#ecfdf5",
-                  borderRadius: "16px",
-                  color: "#059669",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
+          <div className="bg-canvas rounded-[8px] p-6 shadow-level-3 border border-hairline hover:-translate-y-0.5 hover:shadow-level-4 transition-all duration-300">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-9 h-9 rounded-[8px] bg-link/10 flex items-center justify-center">
                 <span
-                  className="material-symbols-outlined"
-                  style={{
-                    fontSize: "1.875rem",
-                    fontVariationSettings: '"FILL" 1',
-                  }}
+                  className="material-symbols-outlined text-link text-lg"
+                  style={{ fontVariationSettings: '"FILL" 1' }}
                 >
                   check_circle
                 </span>
               </div>
               <h3
-                style={{
-                  fontFamily: "'Manrope', sans-serif",
-                  fontSize: "1.5rem",
-                  fontWeight: 700,
-                }}
+                className="text-ink font-semibold"
+                style={{ fontSize: "20px", letterSpacing: "-0.6px", lineHeight: "28px" }}
               >
-                Your Strengths
+                Your strengths
               </h3>
             </div>
-            <ul
-              style={{
-                listStyle: "none",
-                padding: 0,
-                margin: 0,
-                display: "flex",
-                flexDirection: "column",
-                gap: "24px",
-                flexGrow: 1,
-              }}
-            >
+            <ul className="list-none p-0 m-0 flex flex-col gap-4 flex-grow">
               {uniqueStrengths.length > 0 ? (
                 uniqueStrengths.map((s, i) => (
-                  <li key={i} style={{ display: "flex", gap: "16px" }}>
-                    <span
-                      className="material-symbols-outlined"
-                      style={{ color: "#10b981", marginTop: "2px" }}
-                    >
-                      done
-                    </span>
-                    <span style={{ color: "#464555", lineHeight: 1.6 }}>
-                      {s}
-                    </span>
+                  <li key={i} className="flex items-start gap-3">
+                    <span className="material-symbols-outlined text-link text-base mt-0.5">done</span>
+                    <span className="text-body text-sm leading-5">{s}</span>
                   </li>
                 ))
               ) : (
-                <li style={{ color: "#777587" }}>
+                <li className="text-mute text-sm">
                   No distinct strengths identified yet. Keep practicing!
                 </li>
               )}
@@ -461,89 +216,33 @@ export default function SessionSummary({ feedbacks, mode, onNewSession }) {
           </div>
 
           {/* Areas to Improve Card */}
-          <div
-            style={{
-              backgroundColor: "#ffffff",
-              padding: "32px",
-              borderRadius: "24px",
-              boxShadow: "0 20px 40px -12px rgba(25, 28, 29, 0.06)",
-              display: "flex",
-              flexDirection: "column",
-              transition: "transform 0.3s",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "scale(1.02)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "scale(1)")
-            }
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-                marginBottom: "32px",
-              }}
-            >
-              <div
-                style={{
-                  padding: "12px",
-                  backgroundColor: "#fff7ed",
-                  borderRadius: "16px",
-                  color: "#ea580c",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
+          <div className="bg-canvas rounded-[8px] p-6 shadow-level-3 border border-hairline hover:-translate-y-0.5 hover:shadow-level-4 transition-all duration-300">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-9 h-9 rounded-[8px] bg-warning-soft flex items-center justify-center">
                 <span
-                  className="material-symbols-outlined"
-                  style={{
-                    fontSize: "1.875rem",
-                    fontVariationSettings: '"FILL" 1',
-                  }}
+                  className="material-symbols-outlined text-warning-deep text-lg"
+                  style={{ fontVariationSettings: '"FILL" 1' }}
                 >
                   trending_up
                 </span>
               </div>
               <h3
-                style={{
-                  fontFamily: "'Manrope', sans-serif",
-                  fontSize: "1.5rem",
-                  fontWeight: 700,
-                }}
+                className="text-ink font-semibold"
+                style={{ fontSize: "20px", letterSpacing: "-0.6px", lineHeight: "28px" }}
               >
-                Areas to Improve
+                Areas to improve
               </h3>
             </div>
-            <ul
-              style={{
-                listStyle: "none",
-                padding: 0,
-                margin: 0,
-                display: "flex",
-                flexDirection: "column",
-                gap: "24px",
-                flexGrow: 1,
-              }}
-            >
+            <ul className="list-none p-0 m-0 flex flex-col gap-4 flex-grow">
               {sortedWeakAreas.length > 0 ? (
                 sortedWeakAreas.map((area, i) => (
-                  <li key={i} style={{ display: "flex", gap: "16px" }}>
-                    <span
-                      className="material-symbols-outlined"
-                      style={{ color: "#f97316", marginTop: "2px" }}
-                    >
-                      add_circle
-                    </span>
-                    <span style={{ color: "#464555", lineHeight: 1.6 }}>
-                      {area}
-                    </span>
+                  <li key={i} className="flex items-start gap-3">
+                    <span className="material-symbols-outlined text-warning text-base mt-0.5">add_circle</span>
+                    <span className="text-body text-sm leading-5">{area}</span>
                   </li>
                 ))
               ) : (
-                <li style={{ color: "#777587" }}>
+                <li className="text-mute text-sm">
                   No major areas of improvement identified. Great job!
                 </li>
               )}
@@ -551,84 +250,28 @@ export default function SessionSummary({ feedbacks, mode, onNewSession }) {
           </div>
 
           {/* Pro Tips Card */}
-          <div
-            style={{
-              backgroundColor: "#ffffff",
-              padding: "32px",
-              borderRadius: "24px",
-              boxShadow: "0 20px 40px -12px rgba(25, 28, 29, 0.06)",
-              display: "flex",
-              flexDirection: "column",
-              transition: "transform 0.3s",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "scale(1.02)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "scale(1)")
-            }
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-                marginBottom: "32px",
-              }}
-            >
-              <div
-                style={{
-                  padding: "12px",
-                  backgroundColor: "#eef2ff",
-                  borderRadius: "16px",
-                  color: "#3525cd",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
+          <div className="bg-canvas rounded-[8px] p-6 shadow-level-3 border border-hairline hover:-translate-y-0.5 hover:shadow-level-4 transition-all duration-300">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-9 h-9 rounded-[8px] bg-violet/10 flex items-center justify-center">
                 <span
-                  className="material-symbols-outlined"
-                  style={{
-                    fontSize: "1.875rem",
-                    fontVariationSettings: '"FILL" 1',
-                  }}
+                  className="material-symbols-outlined text-violet text-lg"
+                  style={{ fontVariationSettings: '"FILL" 1' }}
                 >
                   lightbulb
                 </span>
               </div>
               <h3
-                style={{
-                  fontFamily: "'Manrope', sans-serif",
-                  fontSize: "1.5rem",
-                  fontWeight: 700,
-                }}
+                className="text-ink font-semibold"
+                style={{ fontSize: "20px", letterSpacing: "-0.6px", lineHeight: "28px" }}
               >
-                Pro Tips for {mode}
+                Pro tips for {mode}
               </h3>
             </div>
-            <ul
-              style={{
-                listStyle: "none",
-                padding: 0,
-                margin: 0,
-                display: "flex",
-                flexDirection: "column",
-                gap: "24px",
-                flexGrow: 1,
-              }}
-            >
+            <ul className="list-none p-0 m-0 flex flex-col gap-4 flex-grow">
               {currentTips.map((tip, i) => (
-                <li key={i} style={{ display: "flex", gap: "16px" }}>
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ color: "#3525cd", marginTop: "2px" }}
-                  >
-                    auto_awesome
-                  </span>
-                  <span style={{ color: "#464555", lineHeight: 1.6 }}>
-                    {tip}
-                  </span>
+                <li key={i} className="flex items-start gap-3">
+                  <span className="material-symbols-outlined text-violet text-base mt-0.5">auto_awesome</span>
+                  <span className="text-body text-sm leading-5">{tip}</span>
                 </li>
               ))}
             </ul>
@@ -636,25 +279,11 @@ export default function SessionSummary({ feedbacks, mode, onNewSession }) {
         </div>
 
         {/* ─── Action Section ─── */}
-        <section style={{ marginTop: "64px", textAlign: "center" }}>
-          <div
-            style={{
-              height: "1px",
-              background:
-                "linear-gradient(to right, transparent, rgba(199,196,216,0.3), transparent)",
-              width: "100%",
-              marginBottom: "32px",
-            }}
-          ></div>
+        <section className="mt-16 text-center">
+          <div className="h-px bg-hairline w-full mb-8" />
           <button
-            className="summary-new-session-btn"
             onClick={onNewSession}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = "scale(1.02)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = "scale(1)")
-            }
+            className="h-12 px-8 text-base font-medium text-white bg-ink rounded-[100px] cursor-pointer hover:opacity-85 transition-opacity"
           >
             Start New Session
           </button>

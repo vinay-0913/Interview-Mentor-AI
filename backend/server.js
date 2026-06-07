@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const { chat } = require("./gemini");
-const User = require("./models/User");
+
 const { MsEdgeTTS, OUTPUT_FORMAT } = require("msedge-tts");
 
 const app = express();
@@ -77,26 +77,7 @@ app.post("/api/tts", async (req, res) => {
   }
 });
 
-app.post("/api/users/sync", async (req, res) => {
-  try {
-    const { clerkId, email, firstName, lastName } = req.body;
-    
-    if (!clerkId || !email) {
-      return res.status(400).json({ error: "Missing clerkId or email" });
-    }
 
-    const user = await User.findOneAndUpdate(
-      { clerkId },
-      { clerkId, email, firstName, lastName },
-      { new: true, upsert: true }
-    );
-
-    res.json({ message: "User synced successfully", user });
-  } catch (error) {
-    console.error("Error syncing user:", error.message);
-    res.status(500).json({ error: "Failed to sync user" });
-  }
-});
 
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () => {

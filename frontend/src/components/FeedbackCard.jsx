@@ -8,15 +8,9 @@ export default function FeedbackCard({ feedback }) {
   const { score, strengths, improvements, ideal_answer } = feedback;
 
   const getScoreColor = (s) => {
-    if (s >= 8) return "from-emerald-500 to-green-600";
-    if (s >= 5) return "from-amber-500 to-yellow-600";
-    return "from-red-500 to-orange-600";
-  };
-
-  const getScoreBg = (s) => {
-    if (s >= 8) return "bg-emerald-500/10 border-emerald-500/30";
-    if (s >= 5) return "bg-amber-500/10 border-amber-500/30";
-    return "bg-red-500/10 border-red-500/30";
+    if (s >= 8) return "text-link bg-link/10 border-link/20";
+    if (s >= 5) return "text-warning-deep bg-warning-soft border-warning/30";
+    return "text-error bg-error-soft border-error/20";
   };
 
   const getScoreLabel = (s) => {
@@ -28,17 +22,18 @@ export default function FeedbackCard({ feedback }) {
   };
 
   return (
-    <div className="mt-4 rounded-xl glass-card overflow-hidden animate-fadeInUp">
+    <div className="mt-4 rounded-[8px] bg-canvas-soft border border-hairline overflow-hidden animate-fadeInUp">
       {/* Header with score */}
-      <div className="flex items-center justify-between p-4 border-b border-slate-700/50">
-        <h4 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-hairline">
+        <span
+          className="text-xs font-normal tracking-wide uppercase text-mute"
+          style={{ fontFamily: "var(--font-mono)" }}
+        >
           Evaluation
-        </h4>
-        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border ${getScoreBg(score)}`}>
-          <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${getScoreColor(score)} flex items-center justify-center text-sm font-bold text-white`}>
-            {score}
-          </div>
-          <span className="text-sm font-medium text-slate-300">{getScoreLabel(score)}/10</span>
+        </span>
+        <div className={`flex items-center gap-2 px-2.5 py-1 rounded-full border ${getScoreColor(score)}`}>
+          <span className="text-sm font-semibold">{score}</span>
+          <span className="text-xs font-medium">{getScoreLabel(score)}/10</span>
         </div>
       </div>
 
@@ -46,16 +41,16 @@ export default function FeedbackCard({ feedback }) {
         {/* Strengths */}
         {strengths && strengths.length > 0 && (
           <div>
-            <h5 className="flex items-center gap-2 text-sm font-semibold text-emerald-400 mb-2">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
+            <h5 className="flex items-center gap-2 text-sm font-medium text-link mb-2">
+              <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: '"FILL" 1' }}>
+                check_circle
+              </span>
               Strengths
             </h5>
-            <ul className="space-y-1.5">
+            <ul className="space-y-1.5 list-none p-0 m-0">
               {strengths.map((s, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
-                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                <li key={i} className="flex items-start gap-2 text-sm text-body">
+                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-link shrink-0" />
                   {s}
                 </li>
               ))}
@@ -66,16 +61,16 @@ export default function FeedbackCard({ feedback }) {
         {/* Improvements */}
         {improvements && improvements.length > 0 && (
           <div>
-            <h5 className="flex items-center gap-2 text-sm font-semibold text-amber-400 mb-2">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+            <h5 className="flex items-center gap-2 text-sm font-medium text-warning-deep mb-2">
+              <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: '"FILL" 1' }}>
+                trending_up
+              </span>
               Areas to Improve
             </h5>
-            <ul className="space-y-1.5">
+            <ul className="space-y-1.5 list-none p-0 m-0">
               {improvements.map((imp, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
-                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span>
+                <li key={i} className="flex items-start gap-2 text-sm text-body">
+                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-warning shrink-0" />
                   {imp}
                 </li>
               ))}
@@ -88,18 +83,19 @@ export default function FeedbackCard({ feedback }) {
           <div>
             <button
               onClick={() => setShowIdeal(!showIdeal)}
-              className="flex items-center gap-2 text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition-colors cursor-pointer"
+              className="flex items-center gap-2 text-sm font-medium text-link hover:text-link-deep transition-colors cursor-pointer"
+              style={{ background: "none", border: "none", padding: 0 }}
             >
-              <svg
-                className={`w-4 h-4 transition-transform duration-200 ${showIdeal ? "rotate-90" : ""}`}
-                fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+              <span
+                className="material-symbols-outlined text-base transition-transform duration-200"
+                style={{ transform: showIdeal ? "rotate(90deg)" : "rotate(0deg)" }}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
+                chevron_right
+              </span>
               {showIdeal ? "Hide" : "Show"} Ideal Answer
             </button>
             {showIdeal && (
-              <div className="mt-2 p-3 rounded-lg bg-indigo-500/8 border border-indigo-500/15 text-sm text-slate-300 leading-relaxed animate-fadeIn">
+              <div className="mt-2 p-3 rounded-[6px] bg-link/5 border border-link/15 text-sm text-body leading-relaxed animate-fadeIn">
                 {ideal_answer}
               </div>
             )}

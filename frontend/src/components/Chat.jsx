@@ -174,157 +174,39 @@ export default function Chat({ mode, onEndSession, onBack }) {
   const modeLabels = { DSA: "DSA Mode", HR: "HR Mode", Behavioral: "Behavioral Mode", Technical: "Technical Mode" };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100vh",
-        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
-        backgroundColor: "#f8f9fa",
-        color: "#191c1d",
-      }}
-    >
-      {/* ─── Responsive Styles ─── */}
-      <style>{`
-        .chat-header-left { display: flex; align-items: center; gap: 16px; min-width: 0; }
-        .chat-header-logo {
-          font-family: 'Manrope', sans-serif;
-          font-size: 1.25rem;
-          font-weight: 700;
-          letter-spacing: -0.025em;
-          color: #38393cff;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .chat-header-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
-        .chat-mode-label {
-          padding: 8px 16px;
-          font-size: 0.875rem;
-          font-weight: 600;
-          color: #64748b;
-          background: none;
-          border: none;
-          border-radius: 12px;
-          cursor: pointer;
-        }
-        .chat-end-btn {
-          padding: 8px 20px;
-          font-size: 0.875rem;
-          font-weight: 600;
-          color: #ffffff;
-          background-color: #ba1a1a;
-          border: none;
-          border-radius: 12px;
-          cursor: pointer;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-          transition: opacity 0.2s;
-          white-space: nowrap;
-        }
-
-        .proficiency-title {
-          font-size: 2rem;
-          font-weight: 800;
-          margin-bottom: 32px;
-          color: #414345ff;
-          font-family: 'Manrope', sans-serif;
-          text-align: center;
-          padding: 0 16px;
-        }
-
-        .proficiency-btn {
-          padding: 16px 32px;
-          font-size: 1.125rem;
-          font-weight: 600;
-          border-radius: 16px;
-          background-color: #ffffff;
-          border: 2px solid #e2e8f0;
-          color: #4f46e5;
-          cursor: pointer;
-          transition: border-color 0.2s, background-color 0.2s;
-        }
-
-        .chat-input-placeholder::placeholder { color: #9ca3af; }
-
-        /* ─── Mobile (≤ 640px) ─── */
-        @media (max-width: 640px) {
-          .chat-header-logo { font-size: 1rem; }
-          .chat-mode-label { display: none; }
-          .chat-end-btn {
-            padding: 8px 14px;
-            font-size: 0.8rem;
-          }
-
-          .proficiency-title { font-size: 1.5rem; margin-bottom: 24px; }
-          .proficiency-btn { padding: 12px 24px; font-size: 1rem; }
-
-          .chat-messages-area {
-            padding: 16px !important;
-            padding-bottom: 140px !important;
-          }
-
-          .chat-input-area {
-            padding: 12px 16px !important;
-          }
-        }
-
-        /* ─── Tablet (641px – 1024px) ─── */
-        @media (min-width: 641px) and (max-width: 1024px) {
-          .chat-messages-area {
-            padding: 20px !important;
-            padding-bottom: 150px !important;
-          }
-          .chat-input-area {
-            padding: 16px 20px !important;
-          }
-        }
-      `}</style>
+    <div className="w-full min-h-screen flex flex-col bg-canvas-soft text-ink" style={{ fontFamily: "var(--font-sans)" }}>
 
       {/* ─── Header ─── */}
       <header
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "16px 24px",
-          backgroundColor: "rgba(255,255,255,0.7)",
-          backdropFilter: "blur(16px)",
-          WebkitBackdropFilter: "blur(16px)",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-          flexShrink: 0,
-          gap: "12px",
-        }}
+        className="sticky top-0 z-50 flex items-center justify-between px-4 sm:px-6 bg-canvas/80 backdrop-blur-xl border-b border-hairline shrink-0"
+        style={{ height: "64px" }}
       >
-        <div className="chat-header-left">
+        <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => { stopAudio(); onBack(); }}
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: "8px",
-              borderRadius: "8px",
-              display: "flex",
-              alignItems: "center",
-              color: "#64748b",
-              flexShrink: 0,
-            }}
+            className="flex items-center justify-center w-8 h-8 rounded-full border border-hairline text-body hover:text-ink hover:border-hairline-strong transition-colors cursor-pointer bg-canvas"
             title="Back to home"
           >
-            <span className="material-symbols-outlined">arrow_back</span>
+            <span className="material-symbols-outlined text-lg">arrow_back</span>
           </button>
-          <span className="chat-header-logo">Interview Mentor AI</span>
+          <span className="text-[15px] font-semibold tracking-tight text-ink truncate">
+            Interview Mentor AI
+          </span>
         </div>
 
-        <div className="chat-header-right">
-          <button className="chat-mode-label">
+        <div className="flex items-center gap-3 shrink-0">
+          {/* Mode badge */}
+          <span
+            className="hidden sm:inline-flex items-center h-7 px-3 text-xs font-normal text-body bg-canvas-soft-2 rounded-full border border-hairline"
+            style={{ fontFamily: "var(--font-mono)" }}
+          >
             {modeLabels[mode] || mode}
-          </button>
+          </span>
+
+          {/* End session */}
           <button
-            className="chat-end-btn"
+            className="h-8 px-4 text-sm font-medium text-white bg-error rounded-[6px] cursor-pointer hover:opacity-90 transition-opacity"
+            style={{ border: "none" }}
             onClick={() => { stopAudio(); onEndSession(feedbacks); }}
           >
             End Session
@@ -333,64 +215,28 @@ export default function Chat({ mode, onEndSession, onBack }) {
       </header>
 
       {/* ─── Chat Area ─── */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          height: "calc(100vh - 72px)",
-          overflow: "hidden",
-        }}
-      >
-        <main
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            position: "relative",
-            backgroundColor: "#f8f9fa",
-          }}
-        >
-          {/* Proficiency Selection */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1 flex flex-col relative bg-canvas-soft">
+
+          {/* Proficiency Selection (DSA mode) */}
           {mode === "DSA" && !proficiency && (
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "#f8f9fa",
-                zIndex: 10,
-                padding: "24px",
-              }}
-            >
-              <h2 className="proficiency-title">
-                Select Your Proficiency Level
-              </h2>
-              <div
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-canvas-soft px-6">
+              <h2
+                className="text-ink font-semibold text-center mb-8"
                 style={{
-                  display: "flex",
-                  gap: "16px",
-                  flexWrap: "wrap",
-                  justifyContent: "center",
+                  fontSize: "clamp(20px, 4vw, 24px)",
+                  letterSpacing: "-0.96px",
+                  lineHeight: "32px",
                 }}
               >
+                Select your proficiency level.
+              </h2>
+              <div className="flex gap-3 flex-wrap justify-center">
                 {["Beginner", "Intermediate", "Advanced"].map((level) => (
                   <button
                     key={level}
-                    className="proficiency-btn"
+                    className="h-12 px-6 text-base font-medium text-ink bg-canvas rounded-[100px] border border-hairline cursor-pointer shadow-level-2 hover:border-ink hover:shadow-level-3 transition-all"
                     onClick={() => handleProficiencySelect(level)}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.borderColor = "#4f46e5")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.borderColor = "#e2e8f0")
-                    }
                   >
                     {level}
                   </button>
@@ -400,70 +246,29 @@ export default function Chat({ mode, onEndSession, onBack }) {
           )}
 
           {/* Messages scroll area */}
-          <div
-            className="chat-messages-area"
-            style={{
-              flex: 1,
-              overflowY: "auto",
-              padding: "24px",
-              paddingBottom: "160px",
-            }}
-          >
+          <div className="flex-1 overflow-y-auto px-4 sm:px-6 pt-6 pb-44">
             {/* Welcome / empty state */}
             {messages.length === 0 && mode !== "DSA" && (
-              <div
-                style={{
-                  maxWidth: "48rem",
-                  margin: "48px auto",
-                  textAlign: "center",
-                }}
-              >
+              <div className="max-w-2xl mx-auto mt-12 text-center">
                 <h1
+                  className="text-ink font-semibold mb-4"
                   style={{
-                    fontFamily: "'Manrope', sans-serif",
-                    fontSize: "clamp(1.5rem, 4vw, 2.25rem)",
-                    fontWeight: 800,
-                    letterSpacing: "-0.025em",
-                    color: "#191c1d",
-                    marginBottom: "16px",
+                    fontSize: "clamp(20px, 4vw, 24px)",
+                    letterSpacing: "-0.96px",
+                    lineHeight: "32px",
                   }}
                 >
-                  Ready for your {mode} Challenge?
+                  Ready for your {mode} challenge?
                 </h1>
-                <p
-                  style={{
-                    color: "#464555",
-                    fontSize: "clamp(1rem, 2vw, 1.125rem)",
-                    maxWidth: "36rem",
-                    margin: "0 auto 24px",
-                  }}
-                >
-                  I'm your AI technical mentor. We can practice algorithms,
-                  complexity analysis, or do a full mock interview.
+                <p className="text-body text-base max-w-md mx-auto mb-6">
+                  I'm your AI interview mentor. Ask a question or pick a suggestion below to get started.
                 </p>
-                <div
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    justifyContent: "center",
-                    gap: "8px",
-                    marginTop: "16px",
-                  }}
-                >
+                <div className="flex flex-wrap justify-center gap-2">
                   {suggestions.map((s, i) => (
                     <button
                       key={i}
                       onClick={() => handleSend(s)}
-                      style={{
-                        padding: "8px 16px",
-                        fontSize: "0.875rem",
-                        borderRadius: "9999px",
-                        backgroundColor: "#e2e8f0",
-                        color: "#464555",
-                        border: "none",
-                        cursor: "pointer",
-                        transition: "background-color 0.2s",
-                      }}
+                      className="px-4 py-2 text-sm text-body bg-canvas rounded-full border border-hairline cursor-pointer hover:border-hairline-strong hover:text-ink transition-all"
                     >
                       {s}
                     </button>
@@ -473,15 +278,7 @@ export default function Chat({ mode, onEndSession, onBack }) {
             )}
 
             {/* Messages */}
-            <div
-              style={{
-                maxWidth: "56rem",
-                margin: "0 auto",
-                display: "flex",
-                flexDirection: "column",
-                gap: "32px",
-              }}
-            >
+            <div className="max-w-3xl mx-auto flex flex-col gap-6">
               {messages.map((msg, i) => (
                 <ChatMessage key={i} message={msg} isUser={msg.role === "user"} />
               ))}
@@ -489,41 +286,13 @@ export default function Chat({ mode, onEndSession, onBack }) {
               {loading && <TypingIndicator />}
 
               {error && (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                    padding: "16px",
-                    borderRadius: "12px",
-                    backgroundColor: "rgba(186,26,26,0.08)",
-                    border: "1px solid rgba(186,26,26,0.15)",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ color: "#ba1a1a" }}
-                  >
-                    error
-                  </span>
-                  <p
-                    style={{ flex: 1, fontSize: "0.875rem", color: "#ba1a1a", minWidth: "120px" }}
-                  >
-                    {error}
-                  </p>
+                <div className="flex items-center gap-3 px-4 py-3 rounded-[8px] bg-error-soft/30 border border-error/20 flex-wrap">
+                  <span className="material-symbols-outlined text-error text-lg">error</span>
+                  <p className="flex-1 text-sm text-error min-w-[120px]">{error}</p>
                   <button
                     onClick={handleRetry}
-                    style={{
-                      padding: "4px 12px",
-                      fontSize: "0.75rem",
-                      fontWeight: 600,
-                      borderRadius: "8px",
-                      backgroundColor: "rgba(186,26,26,0.12)",
-                      color: "#ba1a1a",
-                      border: "none",
-                      cursor: "pointer",
-                    }}
+                    className="px-3 py-1 text-xs font-medium text-error bg-error/10 rounded-[6px] cursor-pointer hover:bg-error/15 transition-colors"
+                    style={{ border: "none" }}
                   >
                     Retry
                   </button>
@@ -536,31 +305,14 @@ export default function Chat({ mode, onEndSession, onBack }) {
 
           {/* ─── Bottom Input Area ─── */}
           <div
-            className="chat-input-area"
+            className="absolute bottom-0 left-0 right-0 px-4 sm:px-6 pb-6 pt-12"
             style={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              padding: "24px",
-              background:
-                "linear-gradient(to top, #f8f9fa 60%, rgba(248,249,250,0.9) 80%, transparent 100%)",
+              background: "linear-gradient(to top, var(--color-canvas-soft) 60%, rgba(250,250,250,0.9) 80%, transparent 100%)",
             }}
           >
-            <div style={{ maxWidth: "56rem", margin: "0 auto" }}>
-              {/* Input container */}
-              <div
-                style={{
-                  position: "relative",
-                  backgroundColor: "#ffffff",
-                  border: "1px solid rgba(199,196,216,0.3)",
-                  borderRadius: "16px",
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "8px",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-                }}
-              >
+            <div className="max-w-3xl mx-auto">
+              <div className="flex items-center gap-2 bg-canvas border border-hairline rounded-[12px] px-3 py-2 shadow-level-3">
+                {/* Mic button */}
                 {browserSupportsSpeechRecognition && (
                   <button
                     onClick={() => {
@@ -573,73 +325,45 @@ export default function Chat({ mode, onEndSession, onBack }) {
                       }
                     }}
                     disabled={loading}
-                    style={{
-                      padding: "12px",
-                      background: listening
-                        ? "rgba(186, 26, 26, 0.12)"
-                        : "none",
-                      border: "none",
-                      cursor: loading ? "not-allowed" : "pointer",
-                      color: listening ? "#ba1a1a" : "#777587",
-                      display: "flex",
-                      alignItems: "center",
-                      borderRadius: "50%",
-                      transition: "all 0.2s",
-                      flexShrink: 0,
-                    }}
+                    className={`flex items-center justify-center w-9 h-9 rounded-full shrink-0 transition-all cursor-pointer ${
+                      listening
+                        ? "bg-error/10 text-error"
+                        : "text-mute hover:text-ink hover:bg-canvas-soft-2"
+                    }`}
+                    style={{ border: "none" }}
                     title={listening ? "Stop microphone" : "Start microphone"}
                   >
-                    <span className="material-symbols-outlined">
+                    <span className="material-symbols-outlined text-lg">
                       {listening ? "mic_off" : "mic"}
                     </span>
                   </button>
                 )}
+
+                {/* Text input */}
                 <input
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Type your technical explanation here..."
+                  placeholder="Type your answer here..."
                   disabled={loading}
-                  className="chat-input-placeholder"
-                  style={{
-                    flex: 1,
-                    border: "none",
-                    outline: "none",
-                    background: "transparent",
-                    color: "#191c1d",
-                    fontSize: "1rem",
-                    padding: "16px 8px",
-                    fontFamily: "'Inter', sans-serif",
-                    minWidth: 0,
-                  }}
+                  className="flex-1 min-w-0 bg-transparent text-ink text-base outline-none placeholder:text-mute py-2 px-1"
+                  style={{ border: "none", fontFamily: "var(--font-sans)" }}
                 />
+
+                {/* Send button */}
                 <button
                   onClick={() => handleSend()}
                   disabled={loading || !input.trim()}
-                  style={{
-                    padding: "12px",
-                    borderRadius: "12px",
-                    background:
-                      loading || !input.trim()
-                        ? "#c7c4d8"
-                        : "linear-gradient(to bottom right, #3525cd, #4f46e5)",
-                    color: "#ffffff",
-                    border: "none",
-                    cursor:
-                      loading || !input.trim() ? "not-allowed" : "pointer",
-                    boxShadow:
-                      loading || !input.trim()
-                        ? "none"
-                        : "0 4px 12px rgba(53,37,205,0.25)",
-                    transition: "all 0.2s",
-                    display: "flex",
-                    alignItems: "center",
-                    flexShrink: 0,
-                  }}
+                  className={`flex items-center justify-center w-9 h-9 rounded-full shrink-0 transition-all ${
+                    loading || !input.trim()
+                      ? "bg-hairline text-mute cursor-not-allowed"
+                      : "bg-ink text-white cursor-pointer hover:opacity-85"
+                  }`}
+                  style={{ border: "none" }}
                 >
                   <span
-                    className="material-symbols-outlined"
+                    className="material-symbols-outlined text-lg"
                     style={{ fontVariationSettings: '"FILL" 1' }}
                   >
                     send

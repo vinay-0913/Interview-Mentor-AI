@@ -1,20 +1,41 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { MODE_CONFIG } from "../prompts";
-import { useUser, useClerk, SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+
+
+const MODE_CARDS = [
+  {
+    key: "DSA",
+    icon: "code",
+    title: "DSA Practice",
+    description: "Master algorithms and data structures with real-time complexity analysis and structured problem solving.",
+  },
+  {
+    key: "HR",
+    icon: "work",
+    title: "HR Interview",
+    description: "Polish your professional pitch and cultural fit responses with structured STAR-format coaching.",
+  },
+  {
+    key: "Behavioral",
+    icon: "psychology",
+    title: "Behavioral",
+    description: "Nail the STAR method for complex situational, leadership, and conflict resolution questions.",
+  },
+  {
+    key: "Technical",
+    icon: "dns",
+    title: "Technical",
+    description: "CS fundamentals — OOPs, DBMS, Computer Networks & Operating Systems with structured Q&A.",
+  },
+];
 
 export default function Landing({ onSelectMode }) {
-  const { isSignedIn } = useUser();
-  const clerk = useClerk();
-
   const handleModeClick = (mode) => {
-    if (isSignedIn) {
-      onSelectMode(mode);
-    } else {
-      clerk.openSignIn();
-    }
+    onSelectMode(mode);
   };
 
-  const words = ["Practice.", "Improve.", "Get Hired."];
+  /* ─── Typing animation ─── */
+  const words = ["Practice.", "Improve.", "Get hired."];
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentText, setCurrentText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -44,894 +65,336 @@ export default function Landing({ onSelectMode }) {
     return () => clearTimeout(timeout);
   }, [currentText, isDeleting, currentWordIndex]);
 
+  /* ─── Gradient word cycling ─── */
+  const gradientWords = [
+    { text: "Practice.", className: "gradient-text-develop" },
+    { text: "Improve.", className: "gradient-text-preview" },
+    { text: "Get hired.", className: "gradient-text-ship" },
+  ];
+
   return (
-    <div
-      style={{
-        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
-        backgroundColor: "#f8f9fa",
-        color: "#4c5153ff",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        WebkitFontSmoothing: "antialiased",
-      }}
-    >
-      {/* ─── Responsive Styles ─── */}
-      <style>{`
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
+    <div className="w-full min-h-screen flex flex-col bg-canvas-soft text-ink" style={{ fontFamily: "var(--font-sans)" }}>
 
-        /* Nav */
-        .landing-nav-links { display: flex; align-items: center; gap: 32px; }
-        .landing-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; color: #38393c; }
-        .landing-mobile-menu {
-          display: none;
-          flex-direction: column;
-          gap: 8px;
-          padding: 12px 24px 16px;
-          background: rgba(255,255,255,0.97);
-          border-bottom: 1px solid rgba(199,196,216,0.3);
-        }
-        .landing-mobile-menu.open { display: flex; }
-        .landing-mobile-menu a {
-          color: #64748b;
-          text-decoration: none;
-          font-weight: 500;
-          padding: 10px 12px;
-          border-radius: 8px;
-          font-size: 1rem;
-        }
-        .landing-mobile-menu a:hover { background: #f3f4f5; }
-
-        /* Cards grid */
-        .cards-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 32px;
-        }
-
-        /* Footer */
-        .footer-inner {
-          max-width: 80rem;
-          margin-left: auto;
-          margin-right: auto;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          flex-wrap: wrap;
-          gap: 32px;
-        }
-        .footer-links {
-          display: flex;
-          gap: 32px;
-          font-size: 0.875rem;
-          font-weight: 500;
-          color: #464555;
-          flex-wrap: wrap;
-        }
-
-        /* ─── Tablet (≤ 1024px) ─── */
-        @media (max-width: 1024px) {
-          .cards-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-          }
-        }
-
-        /* ─── Mobile (≤ 640px) ─── */
-        @media (max-width: 640px) {
-          .landing-nav-links { display: none !important; }
-          .landing-hamburger { display: flex !important; }
-
-          .cards-grid {
-            grid-template-columns: 1fr;
-            gap: 16px;
-          }
-
-          .footer-inner {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 20px;
-            text-align: left;
-          }
-          .footer-links {
-            gap: 16px;
-            flex-direction: column;
-          }
-
-          .hero-section {
-            padding-top: 48px !important;
-            padding-bottom: 48px !important;
-            padding-left: 16px !important;
-            padding-right: 16px !important;
-          }
-
-          .selection-section {
-            padding-left: 16px !important;
-            padding-right: 16px !important;
-            padding-bottom: 64px !important;
-          }
-
-          .header-logo-text {
-            font-size: 1rem !important;
-          }
-        }
-
-        /* ─── Medium (641px – 1024px) ─── */
-        @media (min-width: 641px) and (max-width: 1024px) {
-          .hero-section {
-            padding-top: 56px !important;
-            padding-bottom: 56px !important;
-            padding-left: 20px !important;
-            padding-right: 20px !important;
-          }
-          .selection-section {
-            padding-left: 20px !important;
-            padding-right: 20px !important;
-          }
-        }
-      `}</style>
-
-      {/* ─── TopAppBar ─── */}
+      {/* ─── Navigation Bar ─── */}
       <header
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
-          backgroundColor: "rgba(255,255,255,0.7)",
-          backdropFilter: "blur(16px)",
-          WebkitBackdropFilter: "blur(16px)",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-        }}
+        className="sticky top-0 z-50 bg-canvas/80 backdrop-blur-xl border-b border-hairline"
+        style={{ height: "64px" }}
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "16px 24px",
-            width: "100%",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span
-              className="header-logo-text"
-              style={{
-                fontFamily: "'Manrope', sans-serif",
-                fontSize: "1.25rem",
-                fontWeight: 700,
-                letterSpacing: "-0.025em",
-                color: "#38393cff",
-              }}
-            >
-              Interview Mentor AI
-            </span>
-          </div>
+        <div className="flex items-center justify-between h-full px-6 max-w-[1400px] mx-auto">
+          {/* Logo */}
+          <span className="text-[15px] font-semibold tracking-tight text-ink">
+            Interview Mentor AI
+          </span>
 
-          {/* Desktop nav */}
-          <nav className="landing-nav-links">
-            <a
-              href="#"
-              style={{
-                color: "#4f46e5",
-                fontWeight: 600,
-                padding: "4px 12px",
-                borderRadius: "8px",
-                textDecoration: "none",
-                transition: "background-color 0.2s",
-              }}
-            >
+          {/* Desktop nav links */}
+          <nav className="hidden md:flex items-center gap-1">
+            <a href="#" className="px-3 py-1.5 text-sm text-body hover:text-ink rounded-full transition-colors">
               Home
             </a>
-            <a
-              href="#"
-              style={{
-                color: "#64748b",
-                padding: "4px 12px",
-                borderRadius: "8px",
-                textDecoration: "none",
-                transition: "background-color 0.2s",
-              }}
-            >
+            <a href="#practice-cards" className="px-3 py-1.5 text-sm text-body hover:text-ink rounded-full transition-colors">
               Practice
             </a>
-            <a
-              href="#"
-              style={{
-                color: "#64748b",
-                padding: "4px 12px",
-                borderRadius: "8px",
-                textDecoration: "none",
-                transition: "background-color 0.2s",
-              }}
-            >
+            <a href="#" className="px-3 py-1.5 text-sm text-body hover:text-ink rounded-full transition-colors">
               Pricing
             </a>
           </nav>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <SignedOut>
-              <SignInButton mode="modal">
-                <button
-                  style={{
-                    padding: "8px 20px",
-                    fontSize: "0.875rem",
-                    fontWeight: 700,
-                    color: "#475569",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    transition: "color 0.2s",
-                  }}
-                >
-                  Log In
-                </button>
-              </SignInButton>
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
+          {/* Right cluster */}
+          <div className="flex items-center gap-3">
 
-            {/* Hamburger – visible only on mobile via CSS */}
+            {/* Hamburger — mobile only */}
             <button
-              className="landing-hamburger"
+              className="md:hidden flex items-center p-2 text-body hover:text-ink transition-colors"
               onClick={() => setMobileMenuOpen((o) => !o)}
               aria-label="Toggle menu"
+              style={{ background: "none", border: "none", cursor: "pointer" }}
             >
-              <span className="material-symbols-outlined">
+              <span className="material-symbols-outlined text-xl">
                 {mobileMenuOpen ? "close" : "menu"}
               </span>
             </button>
           </div>
         </div>
 
-        {/* Mobile dropdown menu */}
-        <div className={`landing-mobile-menu${mobileMenuOpen ? " open" : ""}`}>
-          <a href="#" onClick={() => setMobileMenuOpen(false)}>Home</a>
-          <a href="#" onClick={() => setMobileMenuOpen(false)}>Practice</a>
-          <a href="#" onClick={() => setMobileMenuOpen(false)}>Pricing</a>
-        </div>
+        {/* Mobile dropdown */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-b border-hairline bg-canvas/95 backdrop-blur-xl animate-fadeIn">
+            <div className="flex flex-col py-2 px-6">
+              <a href="#" onClick={() => setMobileMenuOpen(false)}
+                className="py-2.5 text-sm text-body hover:text-ink no-underline transition-colors">
+                Home
+              </a>
+              <a href="#practice-cards" onClick={() => setMobileMenuOpen(false)}
+                className="py-2.5 text-sm text-body hover:text-ink no-underline transition-colors">
+                Practice
+              </a>
+              <a href="#" onClick={() => setMobileMenuOpen(false)}
+                className="py-2.5 text-sm text-body hover:text-ink no-underline transition-colors">
+                Pricing
+              </a>
+
+            </div>
+          </div>
+        )}
       </header>
 
-      {/* ─── Main ─── */}
-      <main
-        style={{
-          position: "relative",
-          flex: 1,
-          background:
-            "radial-gradient(circle at top right, #e2dfff 0%, transparent 40%), radial-gradient(circle at bottom left, #dad7ff 0%, transparent 30%)",
-        }}
-      >
-        {/* ─── Hero Section ─── */}
-        <section
-          className="hero-section"
-          style={{
-            minHeight: "100vh",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            paddingTop: "64px",
-            paddingBottom: "64px",
-            paddingLeft: "24px",
-            paddingRight: "24px",
-            textAlign: "center",
-            maxWidth: "64rem",
-            marginLeft: "auto",
-            marginRight: "auto",
-          }}
-        >
-          {/* Badge */}
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "6px 16px",
-              borderRadius: "9999px",
-              backgroundColor: "#e2dfff",
-              color: "#3323cc",
-              fontSize: "0.875rem",
-              fontWeight: 600,
-              marginBottom: "32px",
-            }}
-          >
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: "1rem" }}
-            >
-              auto_awesome
-            </span>
-            AI-Powered Mentorship
-          </div>
+      {/* ─── Main Content ─── */}
+      <main className="flex-1">
 
-          {/* Heading */}
-          <h1
-            style={{
-              fontFamily: "'Manrope', sans-serif",
-              fontSize: "clamp(2.25rem, 7vw, 4.5rem)",
-              fontWeight: 800,
-              letterSpacing: "-0.025em",
-              color: "#38393cff",
-              marginBottom: "16px",
-              lineHeight: 1.1,
-              animation: "fadeInUp 0.8s ease-out forwards",
-            }}
-          >
-            Crack Your Next Interview 🚀
-          </h1>
+        {/* ─── Hero Band ─── */}
+        <section className="relative overflow-hidden min-h-screen flex flex-col items-center justify-center">
+          {/* Mesh gradient backdrop */}
+          <div className="absolute inset-0 mesh-gradient opacity-60" />
 
-          {/* Animated Words */}
-          <div style={{ height: "48px", marginBottom: "24px" }}>
-            <p
+          <div className="relative max-w-[1000px] mx-auto px-6 py-16 sm:py-24 text-center">
+            {/* Mono eyebrow badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 mb-8 rounded-full bg-canvas-soft-2 border border-hairline">
+              <span className="material-symbols-outlined text-sm text-mute" style={{ fontSize: "14px" }}>
+                auto_awesome
+              </span>
+              <span className="text-xs font-normal tracking-normal text-body" style={{ fontFamily: "var(--font-mono)" }}>
+                AI-Powered Interview Platform
+              </span>
+            </div>
+
+            {/* Headline — display-xl */}
+            <h1
+              className="text-ink font-semibold leading-none animate-fadeInUp"
               style={{
-                fontSize: "clamp(1.25rem, 3vw, 2.5rem)",
-                fontFamily: "'Manrope', sans-serif",
-                fontWeight: 800,
-                color: "#4f46e5",
-                margin: 0,
-                display: "inline-block",
+                fontSize: "clamp(36px, 7vw, 48px)",
+                letterSpacing: "-2.4px",
+                lineHeight: "1",
               }}
             >
-              {currentText}
+              Crack your next interview.
+            </h1>
+
+            {/* Animated gradient words */}
+            <div className="h-14 sm:h-16 flex items-center justify-center mt-4 mb-6">
               <span
+                className="font-semibold gradient-text-develop"
                 style={{
-                  animation: "blink 1s step-end infinite",
-                  fontWeight: "normal",
-                  color: "#4f46e5",
+                  fontSize: "clamp(28px, 5vw, 48px)",
+                  letterSpacing: "-2.4px",
+                  lineHeight: "1",
                 }}
               >
-                |
+                {currentText}
+                <span
+                  className="text-ink font-normal"
+                  style={{
+                    animation: "blink 1s step-end infinite",
+                    WebkitTextFillColor: "var(--color-ink)",
+                  }}
+                >
+                  |
+                </span>
               </span>
+            </div>
+
+            {/* Body lead — body-lg */}
+            <p className="text-body text-lg leading-7 max-w-xl mx-auto mb-10">
+              Master the technical, HR, and behavioral skills needed to land your dream role — with real-time AI feedback.
             </p>
-          </div>
 
-          {/* Subtitle */}
-          <p
-            style={{
-              fontSize: "clamp(1rem, 2.5vw, 1.5rem)",
-              color: "#464555",
-              maxWidth: "42rem",
-              marginLeft: "auto",
-              marginRight: "auto",
-              marginBottom: "48px",
-              fontWeight: 500,
-              lineHeight: 1.6,
-            }}
-          >
-            Master the technical, HR, and behavioral skills needed to land your
-            dream role.
-          </p>
-
-          {/* CTA Buttons */}
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "16px",
-            }}
-          >
-            <button
-              onClick={() =>
-                document
-                  .getElementById("practice-cards")
-                  .scrollIntoView({ behavior: "smooth" })
-              }
-              style={{
-                padding: "14px 28px",
-                borderRadius: "60px",
-                fontWeight: 700,
-                fontSize: "clamp(1rem, 2vw, 1.125rem)",
-                background:
-                  "linear-gradient(to bottom right, #3525cd, #4f46e5)",
-                color: "#ffffff",
-                border: "none",
-                cursor: "pointer",
-                boxShadow: "0 20px 40px -12px rgba(53,37,205,0.25)",
-                transition: "transform 0.2s",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.transform = "scale(1.02)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.transform = "scale(1)")
-              }
-            >
-              Start Free Session
-            </button>
+            {/* CTA Row */}
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <button
+                onClick={() =>
+                  document.getElementById("practice-cards").scrollIntoView({ behavior: "smooth" })
+                }
+                className="h-12 px-6 text-base font-medium text-white bg-ink rounded-[100px] cursor-pointer hover:opacity-85 transition-opacity"
+                id="cta-start"
+              >
+                Start Free Session
+              </button>
+              <a
+                href="#practice-cards"
+                className="h-12 px-6 text-base font-medium text-ink bg-canvas rounded-[100px] border border-hairline cursor-pointer hover:border-hairline-strong transition-colors flex items-center no-underline shadow-level-2"
+              >
+                View Modes
+              </a>
+            </div>
           </div>
         </section>
 
-        {/* ─── Selection Grid ─── */}
+        {/* ─── Interview Mode Cards ─── */}
         <section
           id="practice-cards"
-          className="selection-section"
-          style={{
-            maxWidth: "80rem",
-            marginLeft: "auto",
-            marginRight: "auto",
-            paddingLeft: "24px",
-            paddingRight: "24px",
-            paddingBottom: "96px",
-          }}
+          className="max-w-[1200px] mx-auto px-4 sm:px-6 py-24 sm:py-32"
         >
-          <div style={{ textAlign: "center", marginBottom: "48px" }}>
+          {/* Section header */}
+          <div className="text-center mb-12 sm:mb-16">
+            <span
+              className="inline-block text-xs font-normal tracking-wide uppercase text-mute mb-4"
+              style={{ fontFamily: "var(--font-mono)" }}
+            >
+              Practice Modes
+            </span>
             <h2
+              className="text-ink font-semibold"
               style={{
-                fontFamily: "'Manrope', sans-serif",
-                fontSize: "clamp(1.75rem, 4vw, 2.75rem)",
-                fontWeight: 800,
-                color: "#40454bff",
+                fontSize: "clamp(24px, 4vw, 32px)",
+                letterSpacing: "-1.28px",
+                lineHeight: "1.25",
               }}
             >
-              Interview Modes
+              Choose your interview mode.
             </h2>
-            <p
-              style={{
-                color: "#464555",
-                marginTop: "16px",
-                fontSize: "clamp(1rem, 2vw, 1.125rem)",
-              }}
-            >
-              Select a mode to begin your practice session
+            <p className="text-body text-base mt-3 max-w-lg mx-auto">
+              Select a mode to begin your personalized practice session with real-time AI evaluation.
             </p>
           </div>
 
-          <div className="cards-grid">
-            {/* Card 1: DSA */}
-            <div
-              onClick={() => handleModeClick("DSA")}
-              style={{
-                position: "relative",
-                padding: "32px",
-                borderRadius: "16px",
-                backgroundColor: "#ffffff",
-                boxShadow:
-                  "0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)",
-                cursor: "pointer",
-                overflow: "hidden",
-                transition: "transform 0.3s ease, box-shadow 0.3s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "scale(1.01)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 24px -8px rgba(25,28,29,0.06)";
-                const arrow = e.currentTarget.querySelector(".arrow-icon");
-                if (arrow) arrow.style.transform = "translateX(4px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "scale(1)";
-                e.currentTarget.style.boxShadow =
-                  "0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)";
-                const arrow = e.currentTarget.querySelector(".arrow-icon");
-                if (arrow) arrow.style.transform = "translateX(0px)";
-              }}
-            >
+          {/* Cards grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {MODE_CARDS.map((card) => (
               <div
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  right: 0,
-                  width: "128px",
-                  height: "128px",
-                  backgroundColor: "rgba(226,223,255,0.2)",
-                  borderRadius: "50%",
-                  marginRight: "-64px",
-                  marginTop: "-64px",
-                  filter: "blur(48px)",
-                }}
-              ></div>
-              <div
-                style={{
-                  marginBottom: "24px",
-                  width: "56px",
-                  height: "56px",
-                  borderRadius: "16px",
-                  backgroundColor: "#e2dfff",
-                  color: "#3525cd",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
+                key={card.key}
+                onClick={() => handleModeClick(card.key)}
+                className="group bg-canvas rounded-[8px] p-6 cursor-pointer shadow-level-2 hover:shadow-level-4 hover:-translate-y-0.5 transition-all duration-300"
               >
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: "1.875rem" }}
+                {/* Icon */}
+                <div className="w-10 h-10 rounded-[8px] bg-canvas-soft-2 flex items-center justify-center mb-5">
+                  <span className="material-symbols-outlined text-ink text-xl">
+                    {card.icon}
+                  </span>
+                </div>
+
+                {/* Title — display-sm */}
+                <h3
+                  className="text-ink font-semibold mb-2"
+                  style={{ fontSize: "20px", letterSpacing: "-0.6px", lineHeight: "28px" }}
                 >
-                  code
-                </span>
+                  {card.title}
+                </h3>
+
+                {/* Description — body-md */}
+                <p className="text-body text-sm leading-5 mb-5" style={{ letterSpacing: "-0.28px" }}>
+                  {card.description}
+                </p>
+
+                {/* Link */}
+                <div className="flex items-center text-sm font-medium text-ink group-hover:gap-2 transition-all duration-300">
+                  <span>Start practice</span>
+                  <span className="material-symbols-outlined text-base ml-1 group-hover:translate-x-1 transition-transform duration-300">
+                    arrow_forward
+                  </span>
+                </div>
               </div>
-              <h3
+            ))}
+          </div>
+        </section>
+
+        {/* ─── Features Band (Dark) ─── */}
+        <section className="bg-ink text-white">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-24 sm:py-32">
+            <div className="text-center mb-16">
+              <span
+                className="inline-block text-xs font-normal tracking-wide uppercase text-hairline-strong mb-4"
+                style={{ fontFamily: "var(--font-mono)" }}
+              >
+                Why Interview Mentor AI
+              </span>
+              <h2
+                className="text-white font-semibold"
                 style={{
-                  fontFamily: "'Manrope', sans-serif",
-                  fontSize: "1.5rem",
-                  fontWeight: 700,
-                  color: "#475569",
-                  marginBottom: "12px",
+                  fontSize: "clamp(24px, 4vw, 32px)",
+                  letterSpacing: "-1.28px",
+                  lineHeight: "1.25",
                 }}
               >
-                💻 DSA Practice
-              </h3>
-              <p
-                style={{
-                  color: "#464555",
-                  fontWeight: 500,
-                  lineHeight: 1.6,
-                  marginBottom: "24px",
-                }}
-              >
-                Master algorithms and data structures with real-time complexity
-                analysis.
-              </p>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  color: "#3525cd",
-                  fontWeight: 700,
-                }}
-              >
-                Practice Now
-                <span
-                  className="arrow-icon material-symbols-outlined"
-                  style={{ marginLeft: "4px", transition: "transform 0.3s ease" }}
-                >
-                  arrow_forward
-                </span>
-              </div>
+                Built for candidates who want to win.
+              </h2>
             </div>
 
-            {/* Card 2: HR */}
-            <div
-              onClick={() => handleModeClick("HR")}
-              style={{
-                position: "relative",
-                padding: "32px",
-                borderRadius: "16px",
-                backgroundColor: "#ffffff",
-                boxShadow:
-                  "0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)",
-                cursor: "pointer",
-                overflow: "hidden",
-                transition: "transform 0.3s ease, box-shadow 0.3s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "scale(1.01)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 24px -8px rgba(25,28,29,0.06)";
-                const arrow = e.currentTarget.querySelector(".arrow-icon");
-                if (arrow) arrow.style.transform = "translateX(4px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "scale(1)";
-                e.currentTarget.style.boxShadow =
-                  "0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)";
-                const arrow = e.currentTarget.querySelector(".arrow-icon");
-                if (arrow) arrow.style.transform = "translateX(0px)";
-              }}
-            >
-              <div
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  right: 0,
-                  width: "128px",
-                  height: "128px",
-                  backgroundColor: "rgba(226,223,255,0.2)",
-                  borderRadius: "50%",
-                  marginRight: "-64px",
-                  marginTop: "-64px",
-                  filter: "blur(48px)",
-                }}
-              ></div>
-              <div
-                style={{
-                  marginBottom: "24px",
-                  width: "56px",
-                  height: "56px",
-                  borderRadius: "16px",
-                  backgroundColor: "#e2dfff",
-                  color: "#58579b",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: "1.875rem" }}
-                >
-                  work
-                </span>
-              </div>
-              <h3
-                style={{
-                  fontFamily: "'Manrope', sans-serif",
-                  fontSize: "1.5rem",
-                  fontWeight: 700,
-                  color: "#475569",
-                  marginBottom: "12px",
-                }}
-              >
-                🧑‍💼 HR Interview
-              </h3>
-              <p
-                style={{
-                  color: "#464555",
-                  fontWeight: 500,
-                  lineHeight: 1.6,
-                  marginBottom: "24px",
-                }}
-              >
-                Polishing your professional pitch and cultural fit responses
-                with AI.
-              </p>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  color: "#58579b",
-                  fontWeight: 700,
-                }}
-              >
-                Practice Now
-                <span
-                  className="arrow-icon material-symbols-outlined"
-                  style={{ marginLeft: "4px", transition: "transform 0.3s ease" }}
-                >
-                  arrow_forward
-                </span>
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+              {[
+                {
+                  icon: "bolt",
+                  title: "Real-time AI feedback.",
+                  description: "Get instant, structured evaluation on every answer with scoring, strengths, and actionable improvements.",
+                },
+                {
+                  icon: "psychology",
+                  title: "Adaptive questioning.",
+                  description: "Our AI adjusts difficulty based on your proficiency level and previous responses for personalized practice.",
+                },
+                {
+                  icon: "trending_up",
+                  title: "Track your progress.",
+                  description: "Comprehensive session summaries with performance analytics, pro tips, and areas to improve.",
+                },
+              ].map((feature) => (
+                <div key={feature.title} className="text-center sm:text-left">
+                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mb-4 mx-auto sm:mx-0">
+                    <span className="material-symbols-outlined text-white text-xl">{feature.icon}</span>
+                  </div>
+                  <h3
+                    className="text-white font-semibold mb-2"
+                    style={{ fontSize: "20px", letterSpacing: "-0.6px", lineHeight: "28px" }}
+                  >
+                    {feature.title}
+                  </h3>
+                  <p className="text-hairline-strong text-sm leading-5" style={{ letterSpacing: "-0.28px" }}>
+                    {feature.description}
+                  </p>
+                </div>
+              ))}
             </div>
+          </div>
+        </section>
 
-            {/* Card 3: Behavioral */}
-            <div
-              onClick={() => handleModeClick("Behavioral")}
+        {/* ─── CTA Band ─── */}
+        <section className="bg-canvas-soft">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-24 sm:py-32 text-center">
+            <h2
+              className="text-ink font-semibold mb-4"
               style={{
-                position: "relative",
-                padding: "32px",
-                borderRadius: "16px",
-                backgroundColor: "#ffffff",
-                boxShadow:
-                  "0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)",
-                cursor: "pointer",
-                overflow: "hidden",
-                transition: "transform 0.3s ease, box-shadow 0.3s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "scale(1.01)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 24px -8px rgba(25,28,29,0.06)";
-                const arrow = e.currentTarget.querySelector(".arrow-icon");
-                if (arrow) arrow.style.transform = "translateX(4px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "scale(1)";
-                e.currentTarget.style.boxShadow =
-                  "0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)";
-                const arrow = e.currentTarget.querySelector(".arrow-icon");
-                if (arrow) arrow.style.transform = "translateX(0px)";
+                fontSize: "clamp(24px, 4vw, 32px)",
+                letterSpacing: "-1.28px",
+                lineHeight: "1.25",
               }}
             >
-              <div
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  right: 0,
-                  width: "128px",
-                  height: "128px",
-                  backgroundColor: "rgba(255,219,204,0.2)",
-                  borderRadius: "50%",
-                  marginRight: "-64px",
-                  marginTop: "-64px",
-                  filter: "blur(48px)",
-                }}
-              ></div>
-              <div
-                style={{
-                  marginBottom: "24px",
-                  width: "56px",
-                  height: "56px",
-                  borderRadius: "16px",
-                  backgroundColor: "#ffdbcc",
-                  color: "#7e3000",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: "1.875rem" }}
-                >
-                  psychology
-                </span>
-              </div>
-              <h3
-                style={{
-                  fontFamily: "'Manrope', sans-serif",
-                  fontSize: "1.5rem",
-                  fontWeight: 700,
-                  color: "#475569",
-                  marginBottom: "12px",
-                }}
-              >
-                🧠 Behavioral
-              </h3>
-              <p
-                style={{
-                  color: "#464555",
-                  fontWeight: 500,
-                  lineHeight: 1.6,
-                  marginBottom: "24px",
-                }}
-              >
-                Nail the STAR method for complex situational and conflict
-                questions.
-              </p>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  color: "#7e3000",
-                  fontWeight: 700,
-                }}
-              >
-                Practice Now
-                <span
-                  className="arrow-icon material-symbols-outlined"
-                  style={{ marginLeft: "4px", transition: "transform 0.3s ease" }}
-                >
-                  arrow_forward
-                </span>
-              </div>
-            </div>
-
-            {/* Card 4: Technical */}
-            <div
-              onClick={() => handleModeClick("Technical")}
-              style={{
-                position: "relative",
-                padding: "32px",
-                borderRadius: "16px",
-                backgroundColor: "#ffffff",
-                boxShadow:
-                  "0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)",
-                cursor: "pointer",
-                overflow: "hidden",
-                transition: "transform 0.3s ease, box-shadow 0.3s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "scale(1.01)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 24px -8px rgba(25,28,29,0.06)";
-                const arrow = e.currentTarget.querySelector(".arrow-icon");
-                if (arrow) arrow.style.transform = "translateX(4px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "scale(1)";
-                e.currentTarget.style.boxShadow =
-                  "0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)";
-                const arrow = e.currentTarget.querySelector(".arrow-icon");
-                if (arrow) arrow.style.transform = "translateX(0px)";
-              }}
+              Ready to ace your next interview?
+            </h2>
+            <p className="text-body text-base max-w-lg mx-auto mb-8">
+              Start practicing now with our AI-powered interview mentor. No setup required.
+            </p>
+            <button
+              onClick={() =>
+                document.getElementById("practice-cards").scrollIntoView({ behavior: "smooth" })
+              }
+              className="h-12 px-8 text-base font-medium text-white bg-ink rounded-[100px] cursor-pointer hover:opacity-85 transition-opacity"
             >
-              <div
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  right: 0,
-                  width: "128px",
-                  height: "128px",
-                  backgroundColor: "rgba(207,240,249,0.3)",
-                  borderRadius: "50%",
-                  marginRight: "-64px",
-                  marginTop: "-64px",
-                  filter: "blur(48px)",
-                }}
-              ></div>
-              <div
-                style={{
-                  marginBottom: "24px",
-                  width: "56px",
-                  height: "56px",
-                  borderRadius: "16px",
-                  backgroundColor: "#cff0f9",
-                  color: "#0e7490",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: "1.875rem" }}
-                >
-                  dns
-                </span>
-              </div>
-              <h3
-                style={{
-                  fontFamily: "'Manrope', sans-serif",
-                  fontSize: "1.5rem",
-                  fontWeight: 700,
-                  color: "#475569",
-                  marginBottom: "12px",
-                }}
-              >
-                ⚙️ Technical
-              </h3>
-              <p
-                style={{
-                  color: "#464555",
-                  fontWeight: 500,
-                  lineHeight: 1.6,
-                  marginBottom: "24px",
-                }}
-              >
-                CS fundamentals — OOPs, DBMS, Networks & OS with structured Q&A.
-              </p>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  color: "#0e7490",
-                  fontWeight: 700,
-                }}
-              >
-                Practice Now
-                <span
-                  className="arrow-icon material-symbols-outlined"
-                  style={{ marginLeft: "4px", transition: "transform 0.3s ease" }}
-                >
-                  arrow_forward
-                </span>
-              </div>
-            </div>
+              Get Started
+            </button>
           </div>
         </section>
       </main>
 
       {/* ─── Footer ─── */}
-      <footer
-        style={{
-          backgroundColor: "#edeeef",
-          padding: "48px 24px",
-        }}
-      >
-        <div className="footer-inner">
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span
-              style={{
-                fontSize: "1.125rem",
-                fontWeight: 800,
-                color: "#4338ca",
-              }}
-            >
-              Interview Mentor AI
-            </span>
+      <footer className="bg-canvas border-t border-hairline">
+        <div className="max-w-[1200px] mx-auto px-6 py-16">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8">
+            {/* Logo */}
+            <div>
+              <span className="text-sm font-semibold text-ink">Interview Mentor AI</span>
+              <p className="text-xs text-mute mt-1">AI-powered interview preparation.</p>
+            </div>
+
+            {/* Links */}
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
+              <a href="#" className="text-sm text-body hover:text-ink no-underline transition-colors">Privacy Policy</a>
+              <a href="#" className="text-sm text-body hover:text-ink no-underline transition-colors">Terms of Service</a>
+              <a href="#" className="text-sm text-body hover:text-ink no-underline transition-colors">Contact Support</a>
+            </div>
           </div>
-          <div className="footer-links">
-            <a href="#" style={{ color: "inherit", textDecoration: "none" }}>
-              Privacy Policy
-            </a>
-            <a href="#" style={{ color: "inherit", textDecoration: "none" }}>
-              Terms of Service
-            </a>
-            <a href="#" style={{ color: "inherit", textDecoration: "none" }}>
-              Contact Support
-            </a>
-          </div>
-          <div style={{ fontSize: "0.875rem", color: "#464555" }}>
-            © 2026 Interview Mentor AI. All rights reserved.
+
+          <div className="border-t border-hairline mt-8 pt-8">
+            <p className="text-xs text-mute">
+              © {new Date().getFullYear()} Interview Mentor AI. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>

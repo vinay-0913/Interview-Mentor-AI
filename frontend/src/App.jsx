@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useUser } from "@clerk/clerk-react";
 import Landing from "./components/Landing";
 import Chat from "./components/Chat";
 import SessionSummary from "./components/SessionSummary";
@@ -8,7 +7,7 @@ function App() {
   const [view, setView] = useState("landing"); // landing | chat | summary
   const [mode, setMode] = useState(null);
   const [sessionData, setSessionData] = useState([]);
-  const { isLoaded, isSignedIn, user } = useUser();
+
 
   // Handle Initial Route & Browser Back/Forward buttons
   useEffect(() => {
@@ -38,26 +37,7 @@ function App() {
     return () => window.removeEventListener('popstate', syncRouteToState);
   }, []);
 
-  useEffect(() => {
-    if (isLoaded && isSignedIn && user) {
-      // Sync user profile to backend MongoDB Atlas
-      fetch(`${import.meta.env.VITE_API_URL || ""}/api/users/sync`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          clerkId: user.id,
-          email: user.primaryEmailAddress?.emailAddress,
-          firstName: user.firstName,
-          lastName: user.lastName,
-        }),
-      })
-        .then(res => res.json())
-        .then(data => console.log("User synchronized:", data))
-        .catch(err => console.error("Error syncing user:", err));
-    }
-  }, [isLoaded, isSignedIn, user]);
+
 
   const handleSelectMode = (selectedMode) => {
     setMode(selectedMode);
@@ -80,7 +60,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="w-full min-h-screen flex flex-col bg-canvas-soft">
       {view === "landing" && <Landing onSelectMode={handleSelectMode} />}
       {view === "chat" && (
         <Chat
